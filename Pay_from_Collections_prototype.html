@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Pay from Collections · concept prototype · Team CG</title>
+<style>
+/* VERSION 3 (finals): every control works. Built on v2 (after the Round 2 test with 20 merchants):
+   any-QR first, larger own-bank line, phonebook import, failure assurance.
+   Concept prototype for student research, drawn in the visual and verbal style of the Paytm and
+   Paytm for Business apps. Self-contained: no network, no real payment. */
+:root{--navy:#002970;--sky:#00BAF2;--link:#0A84D6;--ink:#101828;--grey:#667085;--line:#E4E7EC;--bg:#F5F7FA;--tint:#E9F6FE;--green:#16A34A;--greent:#E7F6EC;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:#D9DEE8;font-family:Inter,-apple-system,"Segoe UI",Roboto,"Noto Sans Devanagari",Helvetica,Arial,sans-serif;color:var(--ink);}
+#app{max-width:430px;min-height:100%;margin:0 auto;background:var(--bg);position:relative;padding-bottom:34px;}
+.tag{position:fixed;left:0;right:0;bottom:0;max-width:430px;margin:0 auto;background:#101828;color:#D0D5DD;font-size:10.5px;text-align:center;padding:8px 10px;z-index:9;}
+.screen{display:none;min-height:calc(100vh - 34px);}
+.screen.on{display:block;}
+svg{display:block}
+button{font-family:inherit;cursor:pointer;}
+[data-go],[data-act]{cursor:pointer;}
+.hdr{background:#fff;padding:14px 16px 12px;display:flex;align-items:center;gap:11px;}
+.ava{width:40px;height:40px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex:none;}
+.hdr .nm{font-size:15.5px;font-weight:700;line-height:1.2;}
+.hdr .st{font-size:11.5px;color:var(--grey);margin-top:2px;display:flex;align-items:center;gap:5px;}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;}
+.hdr .ic{margin-left:auto;display:flex;gap:8px;align-items:center;}
+.lang{border:1px solid var(--line);background:#fff;border-radius:16px;font-size:11.5px;font-weight:600;color:var(--navy);padding:5px 10px;}
+.logo{font-weight:800;font-size:15px;letter-spacing:-.02em;color:var(--navy);}
+.logo i{font-style:normal;color:var(--sky);}
+.logo small{font-weight:600;font-size:10px;color:var(--grey);margin-left:5px;letter-spacing:0;}
+.bar{background:#fff;padding:14px 16px;display:flex;align-items:center;gap:12px;}
+.bar .bk{background:none;border:0;padding:2px 4px 2px 0;}
+.bar .tt{font-size:16.5px;font-weight:700;}
+.big{font-size:24px;font-weight:700;padding:6px 16px 12px;background:#fff;letter-spacing:-.01em;}
+.pad{padding:12px 14px;}
+.cap{font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--grey);}
+.acct{font-size:13.5px;font-weight:600;margin-top:3px;}
+.card{background:#fff;border-radius:14px;padding:14px 15px;margin-bottom:11px;}
+.h{font-size:16px;font-weight:700;}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+.sub{font-size:12.5px;color:var(--grey);line-height:1.45;}
+.amt{font-size:15px;font-weight:700;}
+.box{border:1px solid var(--line);border-radius:11px;padding:11px 12px;margin-top:11px;}
+.okc{width:16px;height:16px;border-radius:50%;background:var(--green);color:#fff;font-size:10px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;margin-left:5px;vertical-align:-2px;}
+.lnk{color:var(--link);font-weight:600;font-size:12.5px;background:none;border:0;padding:0;}
+.new{background:var(--tint);border:1px solid #B5E3FA;}
+.chip{display:inline-block;font-size:10px;font-weight:700;border-radius:5px;padding:2px 7px;background:var(--navy);color:#fff;letter-spacing:.04em;}
+.btn{display:block;width:100%;border:0;border-radius:26px;padding:14px;font-size:15px;font-weight:700;background:var(--navy);color:#fff;margin-top:13px;}
+.btn.out{background:#fff;color:var(--navy);border:1.5px solid var(--navy);}
+.btn.dim{opacity:.45;}
+.pill{border:0;border-radius:16px;background:var(--tint);color:var(--navy);font-size:12.5px;font-weight:700;padding:7px 15px;}
+.icons{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:13px;text-align:center;}
+.icn{width:46px;height:46px;border-radius:50%;background:var(--navy);margin:0 auto 7px;display:flex;align-items:center;justify-content:center;}
+.icons>div{font-size:11.5px;font-weight:500;line-height:1.25;color:#344054;}
+.it{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--line);}
+.it:last-child{border-bottom:0;padding-bottom:2px;}
+.it:first-child{padding-top:4px;}
+.rd{width:38px;height:38px;border-radius:50%;background:#EEF2F8;color:var(--navy);font-weight:700;font-size:12.5px;display:flex;align-items:center;justify-content:center;flex:none;}
+.it .n{font-size:14px;font-weight:600;}
+.it .d{font-size:11.5px;color:var(--grey);margin-top:2px;}
+.it .r{margin-left:auto;text-align:right;white-space:nowrap;}
+.tg{display:inline-block;font-size:10px;font-weight:600;background:var(--greent);color:#157F3C;border-radius:5px;padding:2px 7px;margin-top:5px;}
+.tg.b{background:var(--tint);color:#0B6FB0;}
+.search{background:#fff;border:1px solid #D0D5DD;border-radius:10px;padding:0 13px;display:flex;gap:9px;align-items:center;margin-bottom:11px;}
+.search input{border:0;outline:0;flex:1;font:inherit;font-size:13px;padding:11px 0;background:none;color:var(--ink);}
+.payee{text-align:center;padding:22px 16px 6px;}
+.payee .rd{width:54px;height:54px;font-size:17px;margin:0 auto 9px;}
+.payee .pn{font-size:16px;font-weight:700;}
+.amtin{display:flex;justify-content:center;align-items:center;margin:16px 0 8px;font-size:42px;font-weight:700;letter-spacing:-.02em;}
+.amtin input{border:0;outline:0;background:none;font:inherit;width:6ch;text-align:left;color:var(--ink);}
+.amtin input::placeholder{color:#C3CBD9;}
+.msg{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:18px;font-size:12.5px;padding:0 14px;color:#344054;}
+.msg input{border:0;outline:0;font:inherit;padding:7px 0;width:150px;text-align:center;background:none;color:#344054;}
+.sheet{background:#fff;border-radius:18px 18px 0 0;padding:16px 16px 22px;margin-top:26px;box-shadow:0 -2px 14px rgba(16,24,40,.06);}
+.pin{background:#fff;border:1.5px dashed #C3CBD9;border-radius:14px;padding:30px 18px;text-align:center;color:var(--grey);font-size:13.5px;line-height:1.55;}
+.tick{width:72px;height:72px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;margin:30px auto 14px;}
+.center{text-align:center;}
+.chk{width:21px;height:21px;border-radius:5px;border:2px solid #C3CBD9;flex:none;display:flex;align-items:center;justify-content:center;}
+.chk.on{background:var(--navy);border-color:var(--navy);}
+.chk svg{display:none}.chk.on svg{display:block}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.in{color:var(--green);}
+.task{background:#fff;border-radius:16px;padding:22px 20px;margin:22px 14px;}
+.task h2{font-size:19px;font-weight:700;color:var(--navy);line-height:1.35;}
+.task p{font-size:14px;line-height:1.5;margin-top:10px;color:#344054;}
+.meta{font-size:11.5px;color:var(--grey);text-align:center;margin-top:12px;line-height:1.5;}
+.result{background:#101828;color:#fff;border-radius:12px;padding:12px 14px;margin-top:14px;font-size:13px;line-height:1.6;text-align:left;}
+.result b{color:var(--sky);}
+.field{width:100%;border:1px solid #D0D5DD;border-radius:10px;padding:12px 13px;font:inherit;font-size:15px;outline:0;background:#fff;}
+.field:focus{border-color:var(--sky);}
+.samt{width:74px;border:1px solid #D0D5DD;border-radius:8px;padding:5px 7px;font:inherit;font-size:13.5px;font-weight:700;text-align:right;}
+.scanbox{background:#0B1220;border-radius:16px;height:330px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.frame{width:200px;height:200px;border-radius:14px;border:3px solid rgba(255,255,255,.85);position:relative;}
+.beam{position:absolute;left:8px;right:8px;height:2px;background:var(--sky);box-shadow:0 0 12px var(--sky);animation:beam 1.8s ease-in-out infinite;}
+@keyframes beam{0%{top:10px}50%{top:186px}100%{top:10px}}
+.qa{border-bottom:1px solid var(--line);padding:12px 0;}
+.qa:last-child{border-bottom:0;}
+.qa .q{font-size:14px;font-weight:600;display:flex;justify-content:space-between;gap:10px;}
+.qa .a{display:none;font-size:12.5px;color:var(--grey);line-height:1.5;margin-top:6px;}
+.qa.open .a{display:block;}
+.npci-top{background:#3B4252;color:#fff;display:flex;align-items:center;gap:10px;padding:14px 14px;font-size:15px;font-weight:600;}
+.upilogo{margin-left:auto;font-weight:800;font-style:italic;font-size:17px;letter-spacing:-.02em;color:#fff;}
+.upilogo i{font-style:normal;font-size:11px;color:#F7941D;margin-left:1px;vertical-align:2px;}
+.npci-pay{padding:14px 18px;border-bottom:1px solid var(--line);background:#F9FAFB;}
+.npci-mid{padding:30px 18px 10px;text-align:center;min-height:250px;}
+.npci-lbl{font-size:12.5px;font-weight:700;letter-spacing:.08em;color:#344054;}
+.npci-dig{display:flex;justify-content:center;align-items:flex-end;gap:16px;margin-top:22px;position:relative;}
+.npci-dig span{width:34px;height:34px;border-bottom:2px solid #344054;font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.npci-show{position:absolute;right:6px;bottom:6px;background:none;border:0;color:#0A84D6;font-size:11.5px;font-weight:700;}
+.npci-warn{margin:26px auto 0;max-width:300px;font-size:12px;color:#B54708;background:#FFFAEB;border-radius:8px;padding:9px 12px;line-height:1.45;}
+.npci-demo{font-size:10.5px;color:#98A2B3;margin-top:10px;}
+.npci-pad{position:fixed;left:0;right:0;bottom:34px;max-width:430px;margin:0 auto;background:#EEF0F4;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;padding:6px 6px 8px;z-index:5;}
+.npci-pad button{background:none;border:0;height:54px;font-size:24px;font-weight:500;color:#101828;display:flex;align-items:center;justify-content:center;border-radius:8px;}
+.npci-pad button:active{background:#DDE1E8;}
+.npci-pad .npci-ok{background:#0A84D6;color:#fff;margin:4px 14px;height:46px;border-radius:24px;}
+.npci-shake{animation:shk .3s;}
+@keyframes shk{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+#pin:not(.on) .npci-pad{display:none;}
+#ov{position:fixed;inset:0;background:rgba(16,24,40,.45);z-index:20;display:none;}
+#ov.on{display:block;}
+#sh{position:fixed;left:0;right:0;bottom:0;max-width:430px;margin:0 auto;background:#fff;border-radius:18px 18px 0 0;padding:18px 16px 26px;z-index:21;display:none;max-height:80vh;overflow:auto;}
+#sh.on{display:block;}
+#toast{position:fixed;left:50%;bottom:52px;transform:translateX(-50%);background:#101828;color:#fff;font-size:12.5px;padding:10px 14px;border-radius:10px;z-index:30;max-width:360px;width:calc(100% - 40px);text-align:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+#toast.on{opacity:1;}
+body.shot .result, body.shot #done .meta, body.shot .tag, body.shot .lang{display:none;}
+body.shot #app{padding-bottom:0;max-width:390px;margin:0;}
+body.shot{background:#F5F7FA;}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- 0 · tester start -->
+<section class="screen on" id="start">
+  <div class="hdr"><div class="ava">CG</div><div><div class="nm">Tester screen</div><div class="st">Read the task aloud, hand over the phone, stay silent</div></div></div>
+  <div class="task">
+    <div class="cap">Task for the merchant</div>
+    <h2 style="margin-top:8px">“Aapko Gupta Distributors ko maal ka ₹12,500 bhejna hai. Dikhaiye, is app se kaise karenge.”</h2>
+    <p>Do not point or help. If the merchant asks what to do, say: “Jaisa aapko theek lage.” Note where they hesitate.</p>
+    <p>Ask first which language they keep their apps in, then set it here:
+      <button class="lang" data-lang="en" style="margin-left:4px">English</button>
+      <button class="lang" data-lang="hi">हिंदी</button></p>
+    <button class="btn" data-act="start">Start task</button>
+    <button class="btn out" data-act="explore">Explore freely (no timer)</button>
+  </div>
+  <div class="meta">The timer starts when you tap Start task.<br>Task time, off-path taps and the payee paid show on the success screen.</div>
+</section>
+
+<!-- 1 · home -->
+<section class="screen" id="home">
+  <div class="hdr">
+    <div class="ava">SG</div>
+    <div><div class="nm">Sharma General Store</div><div class="st"><span class="dot"></span><span data-i="sb">Soundbox · Active</span></div></div>
+    <div class="ic"><button class="lang" data-act="toggleLang" id="k-langbtn">हिंदी</button><span class="logo">pay<i>tm</i><small>Concept</small></span></div>
+  </div>
+  <div class="pad">
+    <div class="card" id="k-settle" data-act="settle" data-day="0" data-off="1">
+      <div class="cap" data-i="daily">Daily once payment settlement in</div>
+      <div class="acct" data-act="banks" data-off="1">HDFC A/c - 4521 ›</div>
+      <div class="box">
+        <div class="row"><div class="h" data-i="coll">Today's Collection</div><div class="amt">₹18,400</div></div>
+        <div class="sub" style="margin-top:3px" data-i="tot">Total ₹18,400 from 46 Payments</div>
+        <div class="row" style="margin-top:10px"><div style="font-size:13px;font-weight:600"><span data-i="settled">Settled at 1:30 PM, 2 Oct</span><span class="okc">✓</span></div><span class="lnk" data-i="view">View Details</span></div>
+        <div class="sub" style="font-size:11.5px;margin-top:2px">UTR: 2334455667788</div>
+      </div>
+    </div>
+
+    <div class="card new" data-go="payees" id="k-prompt">
+      <div class="row"><div class="h" data-i="recv">You received ₹1,24,600 this week</div><span class="chip">NEW</span></div>
+      <div class="sub" style="margin-top:5px;color:#344054" data-i="recvs">Pay your suppliers from here.</div>
+      <div id="k-own" style="margin-top:7px;font-size:13.5px;font-weight:700;color:#002970;line-height:1.35" data-i="own">Money goes from your own HDFC A/c - 4521 by UPI. It never sits with Paytm.</div>
+      <button class="btn" data-go="payees" data-i="paysup" id="k-paybtn">Pay Supplier</button>
+    </div>
+
+    <div class="card" id="k-biz">
+      <div class="h" data-i="bizpay">Business Payments</div>
+      <div class="icons">
+        <div data-go="payees"><div class="icn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9"/><path d="M4 9v11h16V9"/><path d="M9 20v-6h6v6"/></svg></div><span data-i="i1">Pay Supplier</span></div>
+        <div data-go="queue" data-off="1"><div class="icn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.2a3.2 3.2 0 010 5.8"/><path d="M18 14.5c1.9.9 3 2.9 3 5.5"/></svg></div><span data-i="i2">Pay Staff</span></div>
+        <div data-go="khata" data-off="1"><div class="icn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></div><span data-i="i3">Khata</span></div>
+        <div data-act="banks" data-off="1"><div class="icn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8"/><path d="M3 20h18"/></svg></div><span data-i="i4">Bank Settlements</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row"><div class="h" data-i="pays">Payments</div><button class="lnk" data-go="payments" data-off="1" data-i="viewall">View All</button></div>
+      <div style="margin-top:6px" id="homePays"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 1a · settlement detail -->
+<section class="screen" id="settle">
+  <div class="bar"><button class="bk" data-back="1"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#101828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div class="tt" data-i="sdet">Settlement Details</div></div>
+  <div class="pad" id="settleBody"></div>
+</section>
+
+<!-- 1b · bank settlements -->
+<section class="screen" id="banks">
+  <div class="bar"><button class="bk" data-go="home"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#101828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div class="tt" data-i="i4">Bank Settlements</div></div>
+  <div class="pad">
+    <div class="card"><div class="cap" data-i="setto">Settled to</div><div class="acct">HDFC Bank - 4521</div><div class="sub" style="margin-top:6px" data-i="wk">This week: ₹1,24,600 across 6 settlements</div></div>
+    <div class="card" id="bankList"></div>
+  </div>
+</section>
+
+<!-- 1c · all payments -->
+<section class="screen" id="payments">
+  <div class="bar"><button class="bk" data-go="home"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#101828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div class="tt" data-i="allpay">All Payments</div></div>
+  <div class="pad"><div class="card" id="allPays"></div></div>
+</section>
+
+<!-- 2 · suppliers -->
+<section class="screen" id="payees">
+  <div class="bar"><button class="bk" data-go="home"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#101828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div class="tt" data-i="paysup">Pay Supplier</div></div>
+  <div class="pad">
+    <label class="search"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#98A2B3" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" data-ph="srch" placeholder="Search name, mobile or UPI ID" autocomplete="off"></label>
+    <div class="card" id="k-anyqr">
+      <div class="icons" style="grid-template-columns:1fr 1fr;margin-top:0">
+        <div data-go="scan" data-off="1"><div class="icn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V5a1 1 0 011-1h3M16 4h3a1 1 0 011 1v3M20 16v3a1 1 0 01-1 1h-3M8 20H5a1 1 0 01-1-1v-3"/><rect x="8.5" y="8.5" width="7" height="7" rx="1"/></svg></div><span data-i="scan">Scan any QR</span></div>
+        <div data-go="mobile" data-off="1"><div class="icn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></svg></div><span data-i="tomob">To Mobile / Contact</span></div>
+      </div>
+      <div style="margin-top:10px;text-align:center;font-size:12.5px;font-weight:700;color:#002970" data-i="works">Works with every UPI app your supplier uses</div>
+    </div>
+    <div class="card" id="k-book">
+      <div class="row"><div class="h" data-i="yours">Your Suppliers</div><button class="lnk" id="k-import" data-act="phonebook" data-off="1" data-i="imp">+ Add from phonebook</button></div>
+      <div class="sub" style="margin:2px 0 6px" data-i="fromhist">From your payment history</div>
+      <div id="supList"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2a · scan -->
+<section class="screen" id="scan">
+  <div class="bar"><button class="bk" data-go="payees"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#101828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div class="tt" data-i="scan">Scan any QR</div></div>
+  <div class="pad">
+    <div class="scanbox"><div class="frame"><div class="beam"></div></div></div>
+    <div class="sub center" style="margin-top:12px" data-i="scanhint">Point the camera at your supplier's QR. Paytm, PhonePe, Google Pay or any bank QR works.</div>
+    <button class="btn" data-act="scanned" data-i="simscan">Simulate scanning a PhonePe QR</button>
+    <button class="btn out" data-act="gallery" data-i="gallery">Upload QR from gallery</button>
+  </div>
+</section>
+
+<!-- 2b · mobile -->
+<section class="screen" id="mobile">
+  <div class="bar"><button class="bk" data-go="payees"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#101828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div class="tt" data-i="tomob">To Mobile / Contact</div></div>
+  <div class="pad">
+    <div class="card">
+      <div class="cap" data-i="entmob">Enter mobile number or UPI ID</div>
+      <input class="field" id="mobIn" style="margin-top:8px" inputmode="text" placeholder="98100 12345 or name@upi" autocomplete="off">
+      <button class="btn" data-act="mobileGo" data-i="proceed">Proceed</button>
+    </div>
+    <div class="card"><div class="h" style="font-size:14.5px" data-i="contacts">Contacts</div><div id="contactList" style="margin-top:4px"></div></div>
+  </div>
+</section>
+
+<!-- 3 · pay -->
+<section class="screen" id="pay">
+  <div class="bar"><button class="bk" data-go="payees"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#101828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div class="tt" data-i="paying">Paying</div></div>
+  <div class="payee">
+    <div class="rd" id="pIni">GD</div>
+    <div class="pn" id="pName">Gupta Distributors</div>
+    <div class="sub" id="k-handle">guptadist@ybl</div>
+    <div class="sub" style="font-size:11.5px"><span data-i="bname">Banking name</span>: <span id="pBank">GUPTA DISTRIBUTORS</span> <span class="okc" style="margin-left:2px">✓</span></div>
+    <div class="sub" id="pApp" style="font-size:11.5px;color:#0B6FB0;font-weight:600;margin-top:4px"></div>
+    <div class="amtin" id="k-amount">₹<input id="amtIn" inputmode="numeric" placeholder="0" autocomplete="off"></div>
+    <span class="msg"><input id="noteIn" data-ph="addnote" placeholder="Add a note" maxlength="30"></span>
+  </div>
+  <div class="sheet" id="k-sheet">
+    <div class="row" data-act="bankPick" style="cursor:pointer"><div><div class="cap" data-i="payfrom">Pay from</div><div class="acct" id="pFrom">HDFC Bank - 4521</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#667085" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
+    <div class="sub" style="margin-top:9px;font-size:12px" data-i="autok">Saved to Khata automatically</div>
+    <button class="btn" data-act="payNow" id="k-paynow">Pay ₹12,500</button>
+  </div>
+</section>
+
+<!-- 4 · UPI PIN page, drawn like the standard NPCI PIN screen. Demo only: PIN is 1234, nothing is stored or sent. -->
+<section class="screen" id="pin" style="background:#fff">
+  <div class="npci-top"><button class="bk" data-act="pinBack" style="background:none;border:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><span id="pinBank">HDFC Bank</span><span class="upilogo">UPI<i>&#9654;</i></span></div>
+  <div class="npci-pay">
+    <div class="row"><div class="sub" style="color:#344054"><span data-i="pto">To:</span> <b id="pinName">Gupta Distributors</b></div></div>
+    <div class="row" style="margin-top:6px"><div class="sub" style="color:#344054"><span data-i="psend">Sending:</span></div><div style="font-weight:700;font-size:16px" id="pinAmt">₹12,500</div></div>
+    <div class="sub" id="qStep" style="margin-top:6px;font-weight:600;color:var(--navy)"></div>
+  </div>
+  <div class="npci-mid">
+    <div class="npci-lbl" data-i="p4">ENTER 4-DIGIT UPI PIN</div>
+    <div class="npci-dig"><span></span><span></span><span></span><span></span><button class="npci-show" data-act="pinShow" data-i="pshow">SHOW</button></div>
+    <div class="npci-warn" id="pinWarn">You are transferring money from your HDFC Bank account to Gupta Distributors</div>
+    <div class="npci-demo" data-i="pdemo">Prototype PIN: 1234. Nothing is stored or sent.</div>
+  </div>
+  <div class="npci-pad">
+    <button data-act="pk" data-k="1">1</button><button data-act="pk" data-k="2">2</button><button data-act="pk" data-k="3">3</button>
+    <button data-act="pk" data-k="4">4</button><button data-act="pk" data-k="5">5</button><button data-act="pk" data-k="6">6</button>
+    <button data-act="pk" data-k="7">7</button><button data-act="pk" data-k="8">8</button><button data-act="pk" data-k="9">9</button>
+    <button data-act="pk" data-k="del" aria-label="Delete"><svg width="26" height="20" viewBox="0 0 26 20" fill="none" stroke="#344054" stroke-width="1.8" stroke-linejoin="round"><path d="M8 2h15v16H8L1 10z"/><path d="M12 7l6 6M18 7l-6 6" stroke-linecap="round"/></svg></button>
+    <button data-act="pk" data-k="0">0</button>
+    <button data-act="pinOk" id="k-cont" aria-label="Submit" class="npci-ok"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
+  </div>
+</section>
+
+<!-- 5 · success -->
+<section class="screen" id="done">
+  <div class="pad center">
+    <div class="tick"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <div style="font-size:26px;font-weight:700" id="dAmt">₹12,500</div>
+    <div style="font-size:16px;font-weight:700;margin-top:4px" data-i="paidok">Paid Successfully</div>
+    <div class="sub" style="margin-top:4px"><span data-i="to">to</span> <span id="dName">Gupta Distributors</span></div>
+    <div class="sub" style="font-size:11.5px;margin-top:2px" id="dRef">2 Oct 2026, 2:45 PM · UPI Ref No: 627512345678</div>
+    <div class="card" style="text-align:left;margin-top:18px" id="k-added">
+      <div class="row"><div class="h" style="font-size:14.5px" data-i="added">Added to Khata</div><span class="okc">✓</span></div>
+      <div class="sub" style="margin-top:4px" id="dMonth">Paid ₹50,000 to Gupta Distributors this month · 4 payments</div>
+    </div>
+    <div class="card" style="text-align:left;background:#E7F6EC;cursor:pointer" id="k-assure" data-go="help">
+      <div class="sub" style="color:#14532D;font-size:12px" data-i="assure"><b>If a payment ever fails,</b> the money returns to your bank on its own. 24x7 Help ›</div>
+    </div>
+    <button class="btn out" data-act="share" data-i="share">Share receipt with supplier</button>
+    <button class="btn out" data-go="khata" data-i="viewk" id="k-viewk">View Khata</button>
+    <button class="btn" data-go="home" data-i="donebtn">Done</button>
+    <div class="result" id="result">Tester: <b>Task time</b> <span id="t">0</span> s · <b>Off-path taps</b> <span id="m">0</span> · <b>Paid</b> <span id="who">-</span></div>
+    <div class="meta"><a href="#start" data-act="reset" style="color:var(--link);font-weight:600">Reset for the next merchant</a></div>
+  </div>
+</section>
+
+<!-- 5a · help -->
+<section class="screen" id="help">
+  <div class="bar"><button class="bk" data-back="1"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#101828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div class="tt" data-i="help">24x7 Help</div></div>
+  <div class="pad">
+    <div class="card" id="faq">
+      <div class="qa" data-act="qa"><div class="q"><span data-i="q1">A payment failed. When does my money come back?</span><span>›</span></div><div class="a" data-i="a1">A failed UPI payment is reversed to your own bank account automatically, usually within minutes. Under RBI rules the bank must reverse it by the next working day.</div></div>
+      <div class="qa" data-act="qa"><div class="q"><span data-i="q2">Does Paytm keep my money?</span><span>›</span></div><div class="a" data-i="a2">No. Your collection settles to your bank exactly as today. When you pay a supplier, the money goes from that bank account by UPI.</div></div>
+      <div class="qa" data-act="qa"><div class="q"><span data-i="q3">My supplier uses PhonePe. Will the payment reach?</span><span>›</span></div><div class="a" data-i="a3">Yes. UPI works across every app and bank. Scan their QR or pay their number from here.</div></div>
+      <div class="qa" data-act="qa"><div class="q"><span data-i="q4">Why do I need a PIN for every staff payment?</span><span>›</span></div><div class="a" data-i="a4">UPI rules need your PIN for each payment. Payments up to ₹1,000 can go by UPI Lite without a PIN.</div></div>
+    </div>
+    <button class="btn" data-act="chat" data-i="chat">Chat with us</button>
+  </div>
+</section>
+
+<!-- 6 · khata -->
+<section class="screen" id="khata">
+  <div class="bar" style="padding-bottom:4px"><button class="bk" data-go="home"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#101828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button></div>
+  <div class="big" data-i="i3">Khata</div>
+  <div class="pad">
+    <div class="two" id="k-totals">
+      <div class="card"><div class="cap" data-i="trec">Total Received</div><div style="font-size:19px;font-weight:700;margin-top:5px" class="in" id="kRec">₹4,86,200</div></div>
+      <div class="card"><div class="cap" data-i="tpaid">Total Paid</div><div style="font-size:19px;font-weight:700;margin-top:5px" id="kPaid">₹3,12,900</div></div>
+    </div>
+    <div class="card" id="k-ledger">
+      <div class="row"><div class="h" data-i="oct">October 2026</div><button class="lnk" data-act="download" aria-label="Download"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#101828" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 11l4.5 4.5 4.5-4.5M5 20h14"/></svg></button></div>
+      <div style="margin-top:6px" id="ledger"></div>
+    </div>
+    <button class="btn" data-act="download" data-i="dl" id="k-dl">Download Statement · PDF or Excel</button>
+  </div>
+</section>
+
+<!-- 7 · pay staff -->
+<section class="screen" id="queue">
+  <div class="bar"><button class="bk" data-go="home"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#101828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div class="tt" data-i="i2">Pay Staff</div></div>
+  <div class="pad">
+    <div class="card" id="k-staff">
+      <div class="h" data-i="yourstaff">Your Staff</div>
+      <div class="sub" style="margin:2px 0 6px" data-i="selpay">Select and pay one after another</div>
+      <div id="staffList"></div>
+    </div>
+    <button class="btn" data-act="payStaff" id="k-pay3">Pay 3 People ₹7,200</button>
+    <div class="meta" data-i="upinote">UPI needs your PIN for each payment.<br>Payments up to ₹1,000 go by UPI Lite without PIN.</div>
+  </div>
+</section>
+
+<!-- 7a · staff done -->
+<section class="screen" id="qdone">
+  <div class="pad center">
+    <div class="tick"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <div style="font-size:26px;font-weight:700" id="qTotal">₹7,200</div>
+    <div style="font-size:16px;font-weight:700;margin-top:4px" id="qHead">3 payments sent</div>
+    <div class="card" style="text-align:left;margin-top:18px" id="qList"></div>
+    <button class="btn out" data-go="khata" data-i="viewk">View Khata</button>
+    <button class="btn" data-go="home" data-i="donebtn">Done</button>
+  </div>
+</section>
+
+</div>
+<div id="ov" data-act="closeSheet"></div>
+<div id="sh"></div>
+<div id="toast"></div>
+<div class="tag">Concept prototype · Team CG student research · not a Paytm product · no real payment happens</div>
+
+<script>
+/* ---------- language ---------- */
+var LANG='en';
+var HI={sb:"साउंडबॉक्स · चालू",daily:"रोज़ एक बार पेमेंट सेटलमेंट",coll:"आज का कलेक्शन",tot:"46 पेमेंट से कुल ₹18,400",
+settled:"2 अक्टूबर, 1:30 PM को सेटल हुआ",view:"विवरण देखें",recv:"इस हफ्ते आपको ₹1,24,600 मिले",
+recvs:"सप्लायर को यहीं से पेमेंट करें।",own:"पैसा आपके अपने HDFC खाते - 4521 से UPI द्वारा जाता है। Paytm के पास नहीं रुकता।",imp:"+ फोनबुक से जोड़ें",assure:"<b>अगर कभी पेमेंट फेल हो,</b> तो पैसा अपने आप आपके बैंक में लौट आता है। 24x7 मदद ›",paysup:"सप्लायर को पेमेंट",
+bizpay:"बिज़नेस पेमेंट",i1:"सप्लायर को पेमेंट",i2:"स्टाफ को पेमेंट",i3:"बही खाता",i4:"बैंक सेटलमेंट",pays:"पेमेंट",viewall:"सभी देखें",
+srch:"नाम, मोबाइल या UPI ID खोजें",yours:"आपके सप्लायर",fromhist:"आपकी पेमेंट हिस्ट्री से",
+scan:"कोई भी QR स्कैन करें",tomob:"मोबाइल / कॉन्टैक्ट पर",
+works:"आपका सप्लायर किसी भी UPI ऐप पर हो, पेमेंट पहुँचता है",paying:"पेमेंट",bname:"बैंक में नाम",
+payfrom:"यहाँ से पेमेंट",autok:"बही खाते में अपने आप जुड़ेगा",enterpin:"UPI PIN डालें",
+pinnote:"यहाँ आपके बैंक का UPI PIN पेज खुलता है, बिल्कुल आज जैसा।<br><br><b>इस प्रोटोटाइप में PIN नहीं डालना है।</b>",cont:"आगे बढ़ें",
+paidok:"पेमेंट सफल",to:"भेजा गया:",added:"बही खाते में जुड़ गया",
+viewk:"बही खाता देखें",donebtn:"हो गया",trec:"कुल प्राप्त",tpaid:"कुल भुगतान",oct:"अक्टूबर 2026",
+dl:"स्टेटमेंट डाउनलोड करें · PDF या Excel",yourstaff:"आपका स्टाफ",
+selpay:"चुनें और एक के बाद एक पेमेंट करें",upinote:"UPI में हर पेमेंट पर आपका PIN लगता है।<br>₹1,000 तक के पेमेंट UPI Lite से बिना PIN जाते हैं।",
+sdet:"सेटलमेंट विवरण",setto:"इसमें सेटल हुआ",wk:"इस हफ्ते: 6 सेटलमेंट में ₹1,24,600",allpay:"सभी पेमेंट",
+scanhint:"कैमरा अपने सप्लायर के QR पर रखें। Paytm, PhonePe, Google Pay या कोई भी बैंक QR चलेगा।",simscan:"PhonePe QR स्कैन करके देखें",gallery:"गैलरी से QR अपलोड करें",
+entmob:"मोबाइल नंबर या UPI ID डालें",proceed:"आगे बढ़ें",contacts:"कॉन्टैक्ट",addnote:"नोट जोड़ें",share:"सप्लायर को रसीद भेजें",
+help:"24x7 मदद",q1:"पेमेंट फेल हो गया। पैसा कब वापस आएगा?",a1:"फेल हुआ UPI पेमेंट अपने आप आपके बैंक खाते में लौट आता है, अक्सर कुछ मिनटों में। RBI नियमों के तहत बैंक को अगले कामकाजी दिन तक लौटाना होता है।",
+q2:"क्या Paytm मेरा पैसा रखता है?",a2:"नहीं। आपका कलेक्शन आज की तरह आपके बैंक में सेटल होता है। सप्लायर को पेमेंट उसी बैंक खाते से UPI द्वारा जाता है।",
+q3:"मेरा सप्लायर PhonePe पर है। क्या पेमेंट पहुँचेगा?",a3:"हाँ। UPI हर ऐप और बैंक में चलता है। उनका QR स्कैन करें या नंबर पर पेमेंट करें।",
+q4:"हर स्टाफ पेमेंट पर PIN क्यों?",a4:"UPI नियमों में हर पेमेंट पर PIN चाहिए। ₹1,000 तक के पेमेंट UPI Lite से बिना PIN जा सकते हैं।",chat:"हमसे चैट करें",pto:"किसे:",psend:"भेज रहे हैं:",p4:"4 अंकों का UPI PIN डालें",pshow:"दिखाएँ",pdemo:"प्रोटोटाइप PIN: 1234। कुछ भी सेव या भेजा नहीं जाता।"};
+var D2={ /* dynamic strings */
+ en:{pay:"Pay",paid:"Paid",today:"Today",yest:"Yesterday",rcv:"Received",due:"Due on",weekly:"Weekly",daily:"Daily",bill:"Bill",newp:"New · added from phonebook",
+  payN:function(n,a){return "Pay "+n+(n===1?" Person ":" People ")+a;},sent:function(n){return n+(n===1?" payment sent":" payments sent");},
+  month:function(a,n,c){return "Paid "+a+" to "+n+" this month · "+c+(c===1?" payment":" payments");},
+  step:function(i,n){return "Staff payment "+i+" of "+n;},lite:"UPI Lite · No PIN",sat:"Every Saturday",perwork:"As per work",
+  enterAmt:"Enter an amount first",added:"added to Your Suppliers",add:"Add",addedb:"Added",pbook:"Add from phonebook",pbsub:"Pick the suppliers you pay often. Only names you choose are added.",
+  choose:"Pay from",dl:"Statement downloaded: Khata_Oct_2026.csv",chat:"In the real app this opens Paytm 24x7 Help chat.",gal:"In the real app this opens your photo gallery to pick a QR.",
+  shared:"Receipt shared. In the real app this opens WhatsApp or SMS.",pqr:"Scanned a PhonePe QR. UPI works across apps.",
+  nosel:"Select at least one staff member",badmob:"Enter a 10-digit mobile number or a UPI ID",coll:"Collection",stock:"Stock",custp:"Customer Payments",
+  sett:"Settled",payments:"payments",utr:"UTR",total:"Total",custrec:"Customer payments in this settlement",paysupp:"Pay Supplier from this",
+  liteDone:function(n){return n+" paid by UPI Lite, no PIN needed";},detail:"Transaction details",ref:"UPI Ref No",close:"Close",mob:"Mobile number"},
+ hi:{pay:"पे करें",paid:"भेजे",today:"आज",yest:"कल",rcv:"प्राप्त",due:"देय",weekly:"हर हफ्ते",daily:"रोज़",bill:"बिल",newp:"नया · फोनबुक से जोड़ा",
+  payN:function(n,a){return n+" लोगों को "+a+" पे करें";},sent:function(n){return n+" पेमेंट भेजे गए";},
+  month:function(a,n,c){return "इस महीने "+n+" को "+a+" · "+c+" पेमेंट";},
+  step:function(i,n){return "स्टाफ पेमेंट "+i+" / "+n;},lite:"UPI Lite · बिना PIN",sat:"हर शनिवार",perwork:"काम के हिसाब से",
+  enterAmt:"पहले रकम डालें",added:"आपके सप्लायर में जुड़ गया",add:"जोड़ें",addedb:"जुड़ गया",pbook:"फोनबुक से जोड़ें",pbsub:"जिन सप्लायर को आप अक्सर पेमेंट करते हैं उन्हें चुनें।",
+  choose:"यहाँ से पेमेंट",dl:"स्टेटमेंट डाउनलोड हुआ: Khata_Oct_2026.csv",chat:"असली ऐप में यह Paytm 24x7 मदद चैट खोलेगा।",gal:"असली ऐप में यह गैलरी खोलेगा।",
+  shared:"रसीद भेजी गई। असली ऐप में यह WhatsApp या SMS खोलेगा।",pqr:"PhonePe QR स्कैन हुआ। UPI हर ऐप में चलता है।",
+  nosel:"कम से कम एक स्टाफ चुनें",badmob:"10 अंकों का मोबाइल नंबर या UPI ID डालें",coll:"कलेक्शन",stock:"माल",custp:"ग्राहकों के पेमेंट",
+  sett:"सेटल हुआ",payments:"पेमेंट",utr:"UTR",total:"कुल",custrec:"इस सेटलमेंट के ग्राहक पेमेंट",paysupp:"इससे सप्लायर को पेमेंट करें",
+  liteDone:function(n){return n+" को UPI Lite से भेजा, PIN नहीं लगा";},detail:"लेन-देन विवरण",ref:"UPI Ref No",close:"बंद करें",mob:"मोबाइल नंबर"}};
+function T(k){return D2[LANG][k];}
+var EN={}; document.querySelectorAll('[data-i]').forEach(function(e){ if(!(e.dataset.i in EN)) EN[e.dataset.i]=e.innerHTML; });
+var ENP={}; document.querySelectorAll('[data-ph]').forEach(function(e){ ENP[e.dataset.ph]=e.placeholder; });
+function setLang(l){ LANG=l; var D=(l==='hi')?HI:EN;
+  document.querySelectorAll('[data-i]').forEach(function(e){ if(D[e.dataset.i]) e.innerHTML=D[e.dataset.i]; });
+  document.querySelectorAll('[data-ph]').forEach(function(e){ e.placeholder=(l==='hi'&&HI[e.dataset.ph])?HI[e.dataset.ph]:ENP[e.dataset.ph]; });
+  document.querySelectorAll('[data-lang]').forEach(function(b){ b.style.background=(b.dataset.lang===l)?'#002970':'#fff'; b.style.color=(b.dataset.lang===l)?'#fff':'#002970'; });
+  document.getElementById('k-langbtn').textContent=(l==='hi')?'English':'हिंदी';
+  renderAll(); }
+
+/* ---------- data ---------- */
+function inr(n){ var s=String(Math.round(n)), last=s.slice(-3), rest=s.slice(0,-3); if(rest) last=','+last; return '₹'+rest.replace(/\B(?=(\d{2})+(?!\d))/g,',')+last; }
+var SUP=[
+ {id:'gd',ini:'GD',name:'Gupta Distributors',handle:'guptadist@ybl',bank:'GUPTA DISTRIBUTORS',app:'',last:{en:'Paid ₹12,500 · 25 Sep',hi:'₹12,500 भेजे · 25 सितंबर'},tag:'weekly',amt:12500,note:'Stock · Bill 2291',month:37500,mc:3},
+ {id:'sd',ini:'SD',name:'Shree Dairy',handle:'shreedairy@paytm',bank:'SHREE DAIRY',app:'',last:{en:'Paid ₹2,100 · Yesterday',hi:'₹2,100 भेजे · कल'},tag:'daily',amt:2100,note:'Milk',month:2100,mc:1},
+ {id:'vs',ini:'VS',name:'Verma Stockist',handle:'vermastockist@okaxis',bank:'VERMA STOCKIST',app:'',last:{en:'Paid ₹8,400 · 29 Sep',hi:'₹8,400 भेजे · 29 सितंबर'},tag:'',amt:8400,note:'',month:8400,mc:1},
+ {id:'sr',ini:'SR',name:'Shop Rent',handle:'rkproperties@oksbi',bank:'R K PROPERTIES',app:'',last:{en:'₹22,000 · Due on 5 Oct',hi:'₹22,000 · 5 अक्टूबर को देय'},tag:'',amt:22000,note:'Rent October',month:0,mc:0},
+ {id:'eb',ini:'⚡',name:'Electricity Bill · BSES Yamuna',handle:'CA No. 1530 XXXX 21 · via Bharat BillPay',bank:'BSES YAMUNA POWER LTD',app:'',last:{en:'₹6,840 · Due on 10 Oct',hi:'₹6,840 · 10 अक्टूबर को देय'},tag:'bill',amt:6840,note:'Electricity Sep',month:0,mc:0},
+ {id:'wb',ini:'💧',name:'Water Bill · Delhi Jal Board',handle:'K No. 2241 XXXX 08 · via Bharat BillPay',bank:'DELHI JAL BOARD',app:'',last:{en:'₹1,260 · Due on 15 Oct',hi:'₹1,260 · 15 अक्टूबर को देय'},tag:'bill',amt:1260,note:'Water Jul to Sep',month:0,mc:0}];
+var CONTACTS=[
+ {id:'bt',ini:'BT',name:'Bansal Traders',handle:'98100 4XXXX',bank:'BANSAL TRADERS'},
+ {id:'ap',ini:'AP',name:'Agarwal Packaging',handle:'99580 2XXXX',bank:'AGARWAL PACKAGING'},
+ {id:'kp',ini:'KP',name:'Kumar Plastics',handle:'98730 6XXXX',bank:'KUMAR PLASTICS'},
+ {id:'me',ini:'ME',name:'Mohan Electricals',handle:'97110 8XXXX',bank:'MOHAN ELECTRICALS'}];
+var STAFF=[{n:'Raju',a:3500,on:true,d:'sat'},{n:'Salim',a:2800,on:true,d:'sat'},{n:'Meena',a:900,on:true,d:'sat'},{n:'Imran',a:0,on:false,d:'perwork'}];
+var SETT=[{d:{en:'2 Oct',hi:'2 अक्टूबर'},t:'1:30 PM',a:18400,c:46,u:'2334455667788'},{d:{en:'1 Oct',hi:'1 अक्टूबर'},t:'1:30 PM',a:21750,c:51,u:'2334455661204'},
+ {d:{en:'30 Sep',hi:'30 सितंबर'},t:'1:30 PM',a:19900,c:49,u:'2334455659877'},{d:{en:'29 Sep',hi:'29 सितंबर'},t:'1:30 PM',a:24300,c:58,u:'2334455658113'},
+ {d:{en:'28 Sep',hi:'28 सितंबर'},t:'1:30 PM',a:20250,c:47,u:'2334455656402'},{d:{en:'27 Sep',hi:'27 सितंबर'},t:'1:30 PM',a:20000,c:44,u:'2334455654990'}];
+var CUST=[340,1250,560,2100,180,4500,890,95,1200,320];
+var LEDGER=[ /* newest first; sign: -1 paid, +1 received */
+ {ini:'₹',name:'cust',d:{en:'46 Payments · Today',hi:'46 पेमेंट · आज'},tag:'coll',a:18400,s:1},
+ {ini:'SD',name:'Shree Dairy',d:{en:'Paid Yesterday, 6:10 AM',hi:'कल भेजा, 6:10 AM'},tag:'stock',a:2100,s:-1},
+ {ini:'₹',name:'cust',d:{en:'51 Payments · Yesterday',hi:'51 पेमेंट · कल'},tag:'coll',a:21750,s:1}];
+var BANKS=['HDFC Bank - 4521','SBI - 7710'];
+var REC=486200, PAID=312900, refN=627512345678, minute=45;
+var S={sup:null,bank:BANKS[0],queue:null,qi:0,back:'home',done:[]};
+
+/* ---------- rendering ---------- */
+function supRow(p){ var last=p.last[LANG]||p.last.en; var tg=p.tag?'<span class="tg b">'+T(p.tag)+'</span>':'';
+  return '<div class="it" data-act="paySup" data-id="'+p.id+'"'+(p.id!=='gd'?' data-off="1"':'')+'><div class="rd">'+p.ini+'</div><div><div class="n">'+p.name+'</div><div class="d">'+last+'</div>'+tg+'</div><div class="r"><button class="pill" data-act="paySup" data-id="'+p.id+'"'+(p.id!=='gd'?' data-off="1"':'')+'>'+T('pay')+'</button></div></div>'; }
+function renderSup(){ var q=(document.getElementById('q').value||'').toLowerCase().trim();
+  var list=SUP.filter(function(p){ return !q || (p.name+' '+p.handle).toLowerCase().indexOf(q)>-1; });
+  document.getElementById('supList').innerHTML=list.length?list.map(supRow).join(''):'<div class="sub" style="padding:12px 0">No supplier matches “'+q.replace(/</g,'')+'”. Try Scan any QR or To Mobile.</div>'; }
+function ledRow(e,i){ var nm=e.name==='cust'?T('custp'):e.name; var tg=e.tag==='coll'?'<span class="tg">'+T('coll')+'</span>':'<span class="tg b">'+(e.tag==='stock'?T('stock'):e.tag)+'</span>';
+  return '<div class="it" data-act="ledger" data-i2="'+i+'"><div class="rd">'+e.ini+'</div><div><div class="n">'+nm+'</div><div class="d">'+(e.d[LANG]||e.d.en)+'</div>'+tg+'</div><div class="r amt'+(e.s>0?' in':'')+'">'+(e.s>0?'+ ':'- ')+inr(e.a)+'</div></div>'; }
+function renderLedger(){ document.getElementById('ledger').innerHTML=LEDGER.map(ledRow).join('');
+  document.getElementById('kRec').textContent=inr(REC); document.getElementById('kPaid').textContent=inr(PAID); }
+function payRow(e){ var nm=e.s>0?T('rcv')+' '+inr(e.a):T('paid')+' '+inr(e.a)+' · '+e.name; return '<div class="it"><div class="rd">'+(e.s>0?'₹':e.ini)+'</div><div><div class="n">'+nm+'</div><div class="d">UPI · '+e.when+'</div></div></div>'; }
+var PAYS=[{s:1,a:340,when:'Today, 2:41 PM'},{s:1,a:1250,when:'Today, 2:34 PM'},{s:1,a:560,when:'Today, 2:20 PM'},{s:1,a:2100,when:'Today, 1:58 PM'},{s:-1,a:2100,ini:'SD',name:'Shree Dairy',when:'Yesterday, 6:10 AM'},{s:1,a:4500,when:'Yesterday, 7:45 PM'}];
+function renderPays(){ document.getElementById('homePays').innerHTML=PAYS.slice(0,2).map(payRow).join(''); document.getElementById('allPays').innerHTML=PAYS.map(payRow).join(''); }
+function renderBanks(){ document.getElementById('bankList').innerHTML=SETT.map(function(s,i){ return '<div class="it" data-act="settle" data-day="'+i+'"><div class="rd">₹</div><div><div class="n">'+inr(s.a)+'</div><div class="d">'+T('sett')+' '+(s.d[LANG]||s.d.en)+', '+s.t+' · '+s.c+' '+T('payments')+'</div></div><div class="r"><span class="okc">✓</span></div></div>'; }).join(''); }
+function renderStaff(){ var tot=0,n=0; document.getElementById('staffList').innerHTML=STAFF.map(function(s,i){ if(s.on&&s.a>0){tot+=s.a;n++;}
+  var lite=(s.a>0&&s.a<=1000)?'<span class="tg b">'+T('lite')+'</span>':'';
+  return '<div class="it"><div class="chk'+(s.on?' on':'')+'" data-act="chk" data-k="'+i+'"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><div data-act="chk" data-k="'+i+'"><div class="n">'+s.n+'</div><div class="d">'+T(s.d)+'</div>'+lite+'</div><div class="r">₹ <input class="samt" inputmode="numeric" data-k="'+i+'" value="'+(s.a||'')+'" placeholder="0"></div></div>'; }).join('');
+  var b=document.getElementById('k-pay3'); b.textContent=T('payN')(n,inr(tot)); b.classList.toggle('dim',n===0); }
+function renderContacts(){ document.getElementById('contactList').innerHTML=CONTACTS.map(function(c){ return '<div class="it" data-act="payContact" data-id="'+c.id+'"><div class="rd">'+c.ini+'</div><div><div class="n">'+c.name+'</div><div class="d">'+c.handle+'</div></div><div class="r"><button class="pill" data-act="payContact" data-id="'+c.id+'">'+T('pay')+'</button></div></div>'; }).join(''); }
+function renderAll(){ renderSup(); renderLedger(); renderPays(); renderBanks(); renderStaff(); renderContacts(); updPayBtn(); }
+
+/* ---------- pay flow ---------- */
+function openPay(p,amt,note,app){ S.sup=p; S.queue=null;
+  document.getElementById('pIni').textContent=p.ini; document.getElementById('pName').textContent=p.name;
+  document.getElementById('k-handle').textContent=p.handle; document.getElementById('pBank').textContent=p.bank;
+  document.getElementById('pApp').textContent=app||''; document.getElementById('amtIn').value=amt||''; document.getElementById('noteIn').value=note||'';
+  document.getElementById('pFrom').textContent=S.bank; updPayBtn(); show('pay'); }
+function amtVal(){ return parseInt((document.getElementById('amtIn').value||'').replace(/\D/g,''),10)||0; }
+function updPayBtn(){ var a=amtVal(), b=document.getElementById('k-paynow'); b.textContent=(LANG==='hi'?inr(a)+' पे करें':'Pay '+inr(a)); b.classList.toggle('dim',a===0); }
+var PIN=''; var PSHOW=false;
+function drawPin(){ var d=document.querySelectorAll('.npci-dig span'); for(var i=0;i<4;i++) d[i].textContent=i<PIN.length?(PSHOW?PIN[i]:'\u25CF'):''; }
+function toPin(name,amt,step){ PIN=''; drawPin(); var bk=S.bank.split(' - ')[0]; document.getElementById('pinBank').textContent=bk;
+  document.getElementById('pinWarn').textContent=(LANG==='hi')?'आप अपने '+bk+' खाते से '+name+' को पैसे भेज रहे हैं':'You are transferring money from your '+bk+' account to '+name; document.getElementById('pinName').textContent=name;
+  document.getElementById('pinAmt').textContent=inr(amt); document.getElementById('qStep').textContent=step||''; show('pin'); }
+function stamp(){ minute++; refN+=7; var h=2+Math.floor(minute/60), m=minute%60; return {time:h+':'+(m<10?'0':'')+m+' PM',ref:String(refN)}; }
+function record(name,ini,amt,tag){ var st=stamp(); PAID+=amt;
+  LEDGER.unshift({ini:ini,name:name,d:{en:'Paid Today, '+st.time,hi:'आज भेजा, '+st.time},tag:tag||'stock',a:amt,s:-1});
+  PAYS.unshift({s:-1,a:amt,ini:ini,name:name,when:'Today, '+st.time}); return st; }
+function finishSingle(){ var p=S.sup, a=amtVal(), note=document.getElementById('noteIn').value.trim(); var st=record(p.name,p.ini,a,note||'stock');
+  p.month=(p.month||0)+a; p.mc=(p.mc||0)+1; p.last={en:'Paid '+inr(a)+' · Today',hi:inr(a)+' भेजे · आज'};
+  if(SUP.indexOf(p)<0) SUP.splice(1,0,p);
+  document.getElementById('dAmt').textContent=inr(a); document.getElementById('dName').textContent=p.name;
+  document.getElementById('dRef').textContent='2 Oct 2026, '+st.time+' · UPI Ref No: '+st.ref;
+  document.getElementById('dMonth').textContent=T('month')(inr(p.month),p.name,p.mc);
+  stopTimer(p.name+' '+inr(a)); renderAll(); show('done'); }
+
+/* ---------- staff queue ---------- */
+function nextStaff(){ var q=S.queue; while(S.qi<q.length && q[S.qi].a<=1000){ var s=q[S.qi]; record(s.n,s.n.slice(0,2).toUpperCase(),s.a,'Salary'); S.done.push(s); toast(T('liteDone')(s.n)); S.qi++; }
+  if(S.qi>=q.length){ finishQueue(); return; } var s2=q[S.qi]; toPin(s2.n,s2.a,T('step')(S.qi+1,q.length)); }
+function finishQueue(){ var tot=S.done.reduce(function(x,s){return x+s.a;},0);
+  document.getElementById('qTotal').textContent=inr(tot); document.getElementById('qHead').textContent=T('sent')(S.done.length);
+  document.getElementById('qList').innerHTML=S.done.map(function(s){ return '<div class="it"><div class="rd">'+s.n.slice(0,2).toUpperCase()+'</div><div><div class="n">'+s.n+'</div><div class="d">'+(s.a<=1000?T('lite'):'UPI · '+S.bank)+'</div></div><div class="r amt">'+inr(s.a)+'</div></div>'; }).join('');
+  stopTimer('staff '+inr(tot)); S.queue=null; renderAll(); show('qdone'); }
+
+/* ---------- sheets, toast ---------- */
+function sheet(html){ document.getElementById('sh').innerHTML=html; document.getElementById('sh').classList.add('on'); document.getElementById('ov').classList.add('on'); }
+function closeSheet(){ document.getElementById('sh').classList.remove('on'); document.getElementById('ov').classList.remove('on'); }
+var tt; function toast(m){ var e=document.getElementById('toast'); e.textContent=m; e.classList.add('on'); clearTimeout(tt); tt=setTimeout(function(){e.classList.remove('on');},2600); }
+function pbSheet(){ sheet('<div class="h">'+T('pbook')+'</div><div class="sub" style="margin:4px 0 8px">'+T('pbsub')+'</div>'+CONTACTS.map(function(c){ var has=SUP.some(function(p){return p.id===c.id;});
+  return '<div class="it"><div class="rd">'+c.ini+'</div><div><div class="n">'+c.name+'</div><div class="d">'+c.handle+'</div></div><div class="r"><button class="pill" data-act="addContact" data-id="'+c.id+'"'+(has?' disabled style="opacity:.5"':'')+'>'+(has?T('addedb'):T('add'))+'</button></div></div>'; }).join('')+'<button class="btn out" data-act="closeSheet">'+T('close')+'</button>'); }
+
+/* ---------- settlement detail ---------- */
+function showSettle(i){ var s=SETT[i]; var cs=CUST.map(function(a,k){ return '<div class="it"><div class="rd">₹</div><div><div class="n">'+T('rcv')+' '+inr(a)+'</div><div class="d">UPI · '+(k<3?'12:':'11:')+(50-k*4)+' PM</div></div></div>'; }).join('');
+  document.getElementById('settleBody').innerHTML='<div class="card"><div class="cap">'+T('sett')+' '+(s.d[LANG]||s.d.en)+', '+s.t+'</div><div style="font-size:26px;font-weight:700;margin-top:4px">'+inr(s.a)+'</div>'+
+   '<div class="sub" style="margin-top:4px">'+s.c+' '+T('payments')+' · HDFC Bank - 4521 <span class="okc">✓</span></div><div class="sub" style="font-size:11.5px;margin-top:2px">'+T('utr')+': '+s.u+'</div>'+
+   '<button class="btn" data-go="payees">'+T('paysupp')+'</button></div><div class="card"><div class="h" style="font-size:14.5px">'+T('custrec')+'</div><div style="margin-top:4px">'+cs+'</div><div class="sub" style="padding-top:8px">+ '+(s.c-CUST.length)+' more</div></div>';
+  show('settle'); }
+
+/* ---------- download ---------- */
+function download(){ var rows=[['Date','Party','Type','Amount (INR)']]; LEDGER.forEach(function(e){ rows.push([(e.d.en.split(',')[0]),e.name==='cust'?'Customer Payments':e.name,e.s>0?'Received':'Paid',(e.s>0?'':'-')+e.a]); });
+  var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+  try{ var b=new Blob([csv],{type:'text/csv'}), a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='Khata_Oct_2026.csv'; document.body.appendChild(a); a.click(); a.remove(); }catch(err){}
+  toast(T('dl')); }
+
+/* ---------- tester measures ---------- */
+var t0=null, miss=0, secs=0, hist=['start'];
+function stopTimer(who){ if(!t0) return; secs=Math.round((Date.now()-t0)/1000); t0=null;
+  document.getElementById('t').textContent=secs; document.getElementById('m').textContent=miss; document.getElementById('who').textContent=who; }
+
+/* ---------- router ---------- */
+function show(id,nopush){ var cur=document.querySelector('.screen.on'); if(!nopush && cur && cur.id!==id) hist.push(cur.id);
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.toggle('on', s.id===id);});
+  window.scrollTo(0,0); if(history.replaceState) history.replaceState(null,'',location.search+'#'+id); }
+function back(){ var p=hist.pop()||'home'; show(p,true); }
+
+var ACT={
+ start:function(){ t0=Date.now(); miss=0; document.getElementById('result').style.display=''; show('home'); },
+ explore:function(){ t0=null; document.getElementById('result').style.display='none'; show('home'); },
+ reset:function(){ t0=null; miss=0; location.hash='start'; location.reload(); },
+ toggleLang:function(){ setLang(LANG==='hi'?'en':'hi'); },
+ settle:function(el){ showSettle(+el.dataset.day||0); },
+ banks:function(){ show('banks'); },
+ paySup:function(el){ var p=SUP.filter(function(x){return x.id===el.dataset.id;})[0]; openPay(p,p.amt,p.note); },
+ payContact:function(el){ var c=CONTACTS.filter(function(x){return x.id===el.dataset.id;})[0]; openPay({id:c.id,ini:c.ini,name:c.name,handle:c.handle,bank:c.bank,last:{en:'',hi:''},tag:''},'',''); },
+ scanned:function(){ toast(T('pqr')); openPay({id:'bt',ini:'BT',name:'Bansal Traders',handle:'bansaltraders@ybl',bank:'BANSAL TRADERS',last:{en:'',hi:''},tag:''},'','', 'PhonePe QR · works on Paytm'); },
+ gallery:function(){ toast(T('gal')); },
+ mobileGo:function(){ var v=document.getElementById('mobIn').value.trim(), d=v.replace(/\D/g,'');
+   if(!(d.length===10 || /^[\w.\-]+@[\w]+$/.test(v))){ toast(T('badmob')); return; }
+   var nm=d.length===10?'+91 '+d.slice(0,5)+' '+d.slice(5):v; openPay({id:'m'+Date.now(),ini:'+',name:nm,handle:d.length===10?T('mob'):v,bank:'VERIFIED BY BANK',last:{en:'',hi:''},tag:''},'',''); },
+ phonebook:function(){ pbSheet(); },
+ addContact:function(el){ var c=CONTACTS.filter(function(x){return x.id===el.dataset.id;})[0]; if(SUP.some(function(p){return p.id===c.id;})) return;
+   SUP.push({id:c.id,ini:c.ini,name:c.name,handle:c.handle,bank:c.bank,last:{en:D2.en.newp,hi:D2.hi.newp},tag:'',amt:'',note:'',month:0,mc:0}); renderSup(); pbSheet(); toast(c.name+' '+T('added')); },
+ bankPick:function(){ sheet('<div class="h">'+T('choose')+'</div>'+BANKS.map(function(b){ return '<div class="it" data-act="setBank" data-b="'+b+'"><div class="rd">'+b.slice(0,2).toUpperCase()+'</div><div><div class="n">'+b+'</div><div class="d">UPI</div></div><div class="r">'+(b===S.bank?'<span class="okc">✓</span>':'')+'</div></div>'; }).join('')); },
+ setBank:function(el){ S.bank=el.dataset.b; document.getElementById('pFrom').textContent=S.bank; closeSheet(); },
+ payNow:function(){ var a=amtVal(); if(!a){ toast(T('enterAmt')); document.getElementById('amtIn').focus(); return; } toPin(S.sup.name,a,''); },
+ pinBack:function(){ if(S.queue){ S.queue=null; show('queue'); } else show('pay'); },
+ pk:function(el){ var k=el.dataset.k; if(k==='del') PIN=PIN.slice(0,-1); else if(PIN.length<4) PIN+=k; drawPin(); },
+ pinShow:function(){ PSHOW=!PSHOW; drawPin(); },
+ pinOk:function(){ if(PIN.length<4){ var g=document.querySelector('.npci-dig'); g.classList.remove('npci-shake'); void g.offsetWidth; g.classList.add('npci-shake'); toast(LANG==='hi'?'4 अंकों का UPI PIN डालें':'Enter your 4-digit UPI PIN'); return; } if(PIN!=='1234'){ var g2=document.querySelector('.npci-dig'); g2.classList.remove('npci-shake'); void g2.offsetWidth; g2.classList.add('npci-shake'); PIN=''; drawPin(); toast(LANG==='hi'?'गलत UPI PIN। फिर से डालें।':'Incorrect UPI PIN. Please try again.'); return; } PIN=''; drawPin(); ACT.pinDone(); },
+ pinDone:function(){ if(S.queue){ var s=S.queue[S.qi]; record(s.n,s.n.slice(0,2).toUpperCase(),s.a,'Salary'); S.done.push(s); S.qi++; nextStaff(); } else finishSingle(); },
+ share:function(){ toast(T('shared')); },
+ chat:function(){ toast(T('chat')); },
+ qa:function(el){ el.classList.toggle('open'); },
+ download:function(){ download(); },
+ ledger:function(el){ var e=LEDGER[+el.dataset.i2]; var nm=e.name==='cust'?T('custp'):e.name;
+   sheet('<div class="h">'+T('detail')+'</div><div style="font-size:24px;font-weight:700;margin-top:10px" class="'+(e.s>0?'in':'')+'">'+(e.s>0?'+ ':'- ')+inr(e.a)+'</div><div class="sub" style="margin-top:4px">'+nm+' · '+(e.d[LANG]||e.d.en)+'</div><div class="sub" style="margin-top:2px">HDFC Bank - 4521</div><button class="btn out" data-act="closeSheet">'+T('close')+'</button>'); },
+ chk:function(el){ var s=STAFF[+el.dataset.k]; s.on=!s.on; renderStaff(); },
+ payStaff:function(){ var q=STAFF.filter(function(s){return s.on&&s.a>0;}); if(!q.length){ toast(T('nosel')); return; } S.queue=q; S.qi=0; S.done=[]; nextStaff(); },
+ closeSheet:function(){ closeSheet(); }
+};
+
+document.addEventListener('click',function(e){
+  var lg=e.target.closest('[data-lang]'); if(lg){ setLang(lg.dataset.lang); return; }
+  if(e.target.closest('input')) return;
+  var el=e.target.closest('[data-act],[data-go],[data-back]'); if(!el) return;
+  if(el.disabled) return;
+  e.preventDefault(); e.stopPropagation();
+  if(t0 && el.dataset.off) miss++;                    // off-path tap during the timed task: still works, but counted
+  if(el.dataset.back){ back(); return; }
+  if(el.dataset.act){ ACT[el.dataset.act](el); return; }
+  if(el.dataset.go==='payees'){ document.getElementById('q').value=''; renderSup(); }
+  show(el.dataset.go);
+});
+document.addEventListener('input',function(e){
+  if(e.target.id==='q') renderSup();
+  if(e.target.id==='amtIn'){ e.target.value=e.target.value.replace(/\D/g,'').slice(0,7); updPayBtn(); }
+  if(e.target.classList.contains('samt')){ var k=+e.target.dataset.k; e.target.value=e.target.value.replace(/\D/g,'').slice(0,6); STAFF[k].a=parseInt(e.target.value,10)||0; if(STAFF[k].a>0) STAFF[k].on=true;
+    var pos=e.target.selectionStart; renderStaff(); var ni=document.querySelector('.samt[data-k="'+k+'"]'); ni.focus(); try{ni.setSelectionRange(pos,pos);}catch(x){} }
+});
+document.addEventListener('keydown',function(e){ if(e.key==='Enter'){ if(e.target.id==='mobIn') ACT.mobileGo(); if(e.target.id==='amtIn') ACT.payNow(); } });
+
+if(location.search.indexOf('shot')>-1) document.body.classList.add('shot');
+setLang(location.search.indexOf('lang=hi')>-1?'hi':'en');
+var h=(location.hash||'').replace('#',''); if(h && document.getElementById(h) && h!=='done' && h!=='qdone' && h!=='pin') show(h);
+</script>
+</body>
+</html>
