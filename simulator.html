@@ -1,201 +1,180 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pay from Collections · Impact Simulator · Team CG</title>
+<title>Pay from Collections · What-if</title>
 <style>
-:root{--navy:#012971;--sky:#0398E0;--ink:#0F1B3D;--grey:#5B6478;--line:#DDE3EE;--tint:#EAF6FD;--amber:#FFF4DC;--amberd:#B26B00;--green:#0E7A3D;--greent:#E7F6EC;--red:#C2410C;--redt:#FDECE4;--bg:#F5F7FA}
+:root{--navy:#012971;--navy2:#0B3A8C;--sky:#00B9FF;--skyd:#0398E0;--ink:#0F1B3D;--grey:#5B6478;--grey2:#8A93A6;--line:#DDE3EE;--tint:#EAF6FD;--tint2:#F3F5F9;--amber:#F5A623;--lsky:#A9D4F5;--white:#fff}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);font-family:Inter,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);font-size:14px;line-height:1.45}
-header{background:var(--navy);color:#fff;padding:14px 18px;position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-header h1{font-size:17px;margin:0;font-weight:800}
-header .sub{font-size:12px;opacity:.8}
-header button{margin-left:auto;background:#fff;color:var(--navy);border:0;border-radius:18px;padding:7px 14px;font-weight:700;font-size:12.5px;cursor:pointer}
-.wrap{max-width:1180px;margin:0 auto;padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:860px){.wrap{grid-template-columns:1fr}}
-.card{background:#fff;border-radius:12px;padding:14px 16px;box-shadow:0 1px 3px rgba(16,24,40,.06)}
-.card h2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--sky);margin:0 0 10px;font-weight:800}
-.row{display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line)}
-.row:last-child{border-bottom:0}
-.lab{font-weight:600;font-size:13px}
-.src{display:block;font-size:11px;color:var(--grey);font-weight:400;margin-top:1px}
-.tag{display:inline-block;font-size:9.5px;font-weight:800;border-radius:4px;padding:1px 6px;margin-right:5px;vertical-align:1px;letter-spacing:.04em}
-.tag.d{background:var(--greent);color:var(--green)} .tag.f{background:var(--tint);color:#0B6FB0} .tag.a{background:var(--amber);color:var(--amberd)}
-.ctl{display:flex;align-items:center;gap:6px;justify-content:flex-end}
-.ctl input[type=number]{width:84px;border:1px solid #C3CBD9;border-radius:8px;padding:6px 8px;font:inherit;font-size:13.5px;font-weight:700;text-align:right;color:var(--navy)}
-.ctl input[type=number]:focus{outline:2px solid var(--sky);border-color:var(--sky)}
-.ctl .u{font-size:12px;color:var(--grey);width:42px}
-.fixed{font-weight:800;color:var(--navy);text-align:right;font-size:14px}
-.fixed .u{font-size:11px;color:var(--grey);font-weight:500;margin-left:3px}
-input[type=range]{width:100%;margin:4px 0 0;accent-color:var(--sky)}
-.rr{grid-template-columns:1fr}
-.rr .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.big{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.kpi{background:var(--navy);color:#fff;border-radius:10px;padding:12px 13px}
-.kpi.t{background:var(--tint);color:var(--navy)}
-.kpi .v{font-size:24px;font-weight:800;line-height:1.1;letter-spacing:-.01em}
-.kpi .l{font-size:11.5px;opacity:.85;margin-top:4px;line-height:1.3}
-.kpi.t .l{color:var(--grey);opacity:1}
-.out{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:13px}
-.out .k{color:var(--grey)} .out .v{font-weight:700;text-align:right;color:var(--navy);white-space:nowrap}
-.out .h{grid-column:1/3;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--sky);font-weight:800;margin-top:8px}
-.calc{font-family:"JetBrains Mono",Menlo,monospace;font-size:11.5px;background:#F3F5F9;border-radius:8px;padding:9px 11px;white-space:pre-wrap;line-height:1.5;margin-top:6px}
-.say{background:var(--tint);border-left:4px solid var(--sky);border-radius:8px;padding:10px 12px;font-size:13.5px;line-height:1.55;margin-top:6px}
-.say b{color:var(--navy)}
-.delta{font-size:11px;color:var(--grey);margin-left:6px;font-weight:600}
-.delta.up{color:var(--green)} .delta.dn{color:var(--red)}
-.note{font-size:11.5px;color:var(--grey);margin-top:8px}
-.bar{height:10px;background:#E3E8F0;border-radius:5px;overflow:hidden;margin:6px 0 2px}
-.bar i{display:block;height:100%;background:var(--sky)}
-.bar i.am{background:#F5A623}
-.pre{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-.pre button{background:#fff;border:1px solid var(--line);border-radius:14px;padding:5px 11px;font:inherit;font-size:12px;font-weight:700;color:var(--navy);cursor:pointer}
-.pre button:hover{border-color:var(--sky)}
-.foot{grid-column:1/-1;font-size:11.5px;color:var(--grey);padding:4px 2px 20px}
+html,body{height:100%}
+body{margin:0;background:#F5F7FA;font-family:Inter,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);line-height:1.35;-webkit-font-smoothing:antialiased}
+.slide{max-width:1280px;margin:0 auto;padding:22px 30px 26px;min-height:100vh;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.top .b{font-weight:800;letter-spacing:.14em;font-size:11px;color:var(--navy)}
+.top .s{font-size:10.5px;letter-spacing:.09em;color:var(--grey2)}
+.top .r{margin-left:auto;display:flex;gap:8px}
+.top button{background:#fff;border:1px solid var(--line);border-radius:16px;padding:6px 13px;font:inherit;font-size:11.5px;font-weight:700;color:var(--navy);cursor:pointer}
+.top button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.eyebrow{font-size:11px;letter-spacing:.16em;font-weight:800;color:var(--skyd);margin:16px 0 2px}
+h1{font-size:30px;font-weight:800;color:var(--navy);margin:0 0 14px;letter-spacing:-.01em}
+.grid{display:grid;grid-template-columns:420px 1fr;gap:18px;flex:1}
+@media(max-width:980px){.grid{grid-template-columns:1fr}}
+.card{background:#fff;border-radius:12px;padding:16px 18px}
+.lab{font-size:10.5px;letter-spacing:.12em;font-weight:800;color:var(--navy);margin-bottom:8px}
+.lab small{font-weight:500;letter-spacing:0;color:var(--grey2);margin-left:6px;text-transform:none;font-size:10.5px}
+.ctl{padding:9px 0;border-bottom:1px solid var(--line)}
+.ctl:last-child{border-bottom:0}
+.ctl .h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ctl .n{font-size:14px;font-weight:600}
+.ctl .n small{display:block;font-size:11px;color:var(--grey2);font-weight:500;margin-top:1px}
+.ctl .v{font-size:20px;font-weight:800;color:var(--skyd);white-space:nowrap;min-width:64px;text-align:right}
+.ctl .v.base{color:var(--navy)}
+input[type=range]{width:100%;margin:6px 0 0;accent-color:var(--skyd);height:22px}
+.locked{background:var(--tint2);border-radius:10px;padding:10px 12px;margin-top:10px}
+.locked .lab{margin-bottom:4px}
+.locked div.i{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;color:var(--grey)}
+.locked div.i b{color:var(--navy)}
+.kpis{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.k{border-radius:12px;padding:16px 16px;min-height:118px;overflow:hidden}
+.k.navy{background:var(--navy);color:#fff}
+.k.tint{background:var(--tint);color:var(--navy)}
+.k .big{font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1;white-space:nowrap}
+.k.tint .big{color:var(--skyd)}
+.k .t{font-size:12.5px;margin-top:8px;line-height:1.3;opacity:.9}
+.k.tint .t{color:var(--grey);opacity:1}
+.k .d{font-size:11px;font-weight:700;margin-top:4px;color:var(--lsky)}
+.k.tint .d{color:var(--grey2)}
+.chain{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;align-items:stretch;margin-top:14px}
+.step{background:#fff;border-radius:10px;padding:12px 6px;text-align:center;position:relative}
+.step .x{font-size:16px;font-weight:800;color:var(--navy);line-height:1.1;white-space:nowrap}
+.step .y{font-size:10.5px;color:var(--grey);margin-top:5px;line-height:1.25}
+.step.res .x{color:var(--skyd)}
+.step:not(:last-child)::after{content:"";position:absolute;right:-6px;top:50%;width:12px;height:12px;background:var(--line);transform:translateY(-50%) rotate(45deg);z-index:1}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.bars .row{margin:8px 0 2px;font-size:12.5px;display:flex;justify-content:space-between}
+.bars .row b{color:var(--navy)}
+.bar{height:16px;border-radius:8px;background:#E3E8F0;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--skyd)}
+.bar i.a{background:var(--amber)}
+.say{background:var(--navy);color:#fff;border-radius:12px;padding:16px 20px;margin-top:14px;font-size:17px;line-height:1.5}
+.say .l{font-size:10.5px;letter-spacing:.14em;font-weight:800;color:var(--sky);margin-bottom:6px}
+.say b{color:var(--sky)}
+.note{font-size:11px;color:var(--grey2);margin-top:10px}
+details{margin-top:12px;font-size:12px;color:var(--grey)}
+summary{cursor:pointer;font-weight:700;color:var(--navy);font-size:12px}
+.mini{display:grid;grid-template-columns:1fr auto;gap:3px 12px;margin-top:8px;font-size:12px}
+.mini .r{text-align:right;font-weight:700;color:var(--navy)}
+.cost .ctl .v{font-size:16px}
+.cost input[type=number]{width:78px;border:1px solid #C3CBD9;border-radius:8px;padding:5px 8px;font:inherit;font-size:14px;font-weight:700;text-align:right;color:var(--navy)}
+.foot{font-size:10px;color:var(--grey2);margin-top:14px;border-top:1px solid var(--line);padding-top:8px}
 </style></head><body>
-<header><div><h1>Pay from Collections · Impact Simulator</h1><div class="sub">Team CG · locked figures carry their source · every assumption can be changed live · outputs recalculate instantly</div></div><button id="reset">Reset to deck</button></header>
-<div class="wrap">
+<div class="slide">
+<div class="top"><span class="b">TEAM CG</span><span class="s">PAYTM INNOVATION CHALLENGE 2026 · FINAL ROUND · WHAT-IF</span>
+<div class="r"><button data-p="deck" class="on">Base case</button><button data-p="cons">Conservative</button><button data-p="up">Upside</button><button id="reset">Reset</button></div></div>
+<div class="eyebrow">IF THE PANEL DOUBTS AN ASSUMPTION, MOVE IT</div>
+<h1>What-if: change an assumption, see the impact</h1>
 
-<!-- ================= LEFT: INPUTS -->
+<div class="grid">
+<!-- ---------------- LEFT -->
 <div>
 <div class="card">
-<h2>Locked: evidence (not editable)</h2>
-<div class="row"><div class="lab"><span class="tag d">DATA</span>Paytm device merchants<span class="src">Paytm Q1 FY27 Earnings Release, 20 Jul 2026</span></div><div class="fixed">1.57 Cr</div></div>
-<div class="row"><div class="lab"><span class="tag f">FIELD</span>Paytm-collecting merchants who pay suppliers from another UPI app<span class="src">Round 1: 19 of the 28 who collect on Paytm (5 more use a bank app)</span></div><div class="fixed">19 of 28<span class="u">= 67.9%</span></div></div>
-<div class="row"><div class="lab"><span class="tag f">FIELD</span>Median monthly turnover, in-band merchants<span class="src">Round 1: median of the 34 merchants in the ₹3 to 20 L band</span></div><div class="fixed">₹8 L</div></div>
-<div class="row"><div class="lab"><span class="tag f">FIELD</span>Baseline Paytm share of outgoing UPI<span class="src">Round 1 proxy: 4 of 21 in-band Paytm-collecting merchants pay mainly from Paytm</span></div><div class="fixed">4 of 21<span class="u">= 19.0%</span></div></div>
-<div class="row"><div class="lab"><span class="tag f">FIELD</span>Test intent, 20 merchants<span class="src">Round 2 test, 2 to 6 Oct: definitely yes 5, probably yes 8, undecided 4, probably no 3</span></div><div class="fixed">5 / 8 / 4 / 3</div></div>
-<div class="row"><div class="lab"><span class="tag f">FIELD</span>Target persona intent, 9 split-app shopkeepers<span class="src">Round 2 test: definitely 4, probably 5</span></div><div class="fixed">4 / 5</div></div>
-<div class="row"><div class="lab"><span class="tag d">DATA</span>Paytm marketing cost<span class="src">Paytm Q1 FY27: ₹79 Cr a quarter, annualised ₹316 Cr</span></div><div class="fixed">₹316 Cr<span class="u">a year</span></div></div>
+<div class="lab">OUR ASSUMPTIONS<small>drag to change</small></div>
+<div class="ctl"><div class="h"><div class="n">Merchants in the ₹3 to 20 L band<small>of 1.57 Cr Paytm devices · deck: 1 in 4</small></div><div class="v" id="v_band">25%</div></div><input type="range" id="band" min="5" max="70" step="1" value="25"></div>
+<div class="ctl"><div class="h"><div class="n">Activation rate<small>of addressable merchants · deck: 32% from the test</small></div><div class="v" id="v_act">32%</div></div><input type="range" id="act" min="5" max="70" step="0.1" value="32"></div>
+<div class="ctl"><div class="h"><div class="n">Turnover paid out to suppliers, rent, wages<small>deck: 85%</small></div><div class="v" id="v_paid">85%</div></div><input type="range" id="paid" min="50" max="100" step="1" value="85"></div>
+<div class="ctl"><div class="h"><div class="n">Of that, sent over UPI<small>deck: 50%</small></div><div class="v" id="v_upi">50%</div></div><input type="range" id="upi" min="10" max="100" step="1" value="50"></div>
+<div class="ctl"><div class="h"><div class="n">Of that, moved to Paytm<small>deck: 15%</small></div><div class="v" id="v_shift">15%</div></div><input type="range" id="shift" min="2" max="50" step="1" value="15"></div>
+<div class="ctl"><div class="h"><div class="n">Comparison cashback rate<small>deck: 0.5%, comparison only</small></div><div class="v" id="v_cmp">0.5%</div></div><input type="range" id="cmp" min="0.1" max="2" step="0.05" value="0.5"></div>
 </div>
 
-<div class="card" style="margin-top:14px">
-<h2>Assumptions: change these</h2>
-<div class="pre"><span style="font-size:11.5px;color:var(--grey);align-self:center">Presets:</span><button data-p="deck">Deck base case</button><button data-p="cons">Conservative</button><button data-p="up">Upside</button><button data-p="harsh">Harsh weights</button></div>
-
-<div class="row rr"><div class="top"><div class="lab"><span class="tag a">ASSUMED</span>Share of device merchants in the ₹3 to 20 L band<span class="src">Deck: 1 in 4 (25%). Our sample had 68% in band but we chose established shops</span></div><div class="ctl"><input type="number" id="band" min="1" max="100" step="1"><span class="u">%</span></div></div><input type="range" id="band_r" min="5" max="70" step="1"></div>
-
-<div class="row rr"><div class="top"><div class="lab"><span class="tag a">ASSUMED</span>Share of turnover paid out (stock, rent, wages)<span class="src">Deck: 85%</span></div><div class="ctl"><input type="number" id="paid" min="1" max="100" step="1"><span class="u">%</span></div></div><input type="range" id="paid_r" min="50" max="100" step="1"></div>
-
-<div class="row rr"><div class="top"><div class="lab"><span class="tag a">ASSUMED</span>Share of that outflow sent over UPI<span class="src">Deck: 50%. Sensitivity 30% to 70%</span></div><div class="ctl"><input type="number" id="upi" min="1" max="100" step="1"><span class="u">%</span></div></div><input type="range" id="upi_r" min="10" max="100" step="1"></div>
-
-<div class="row rr"><div class="top"><div class="lab"><span class="tag a">ASSUMED</span>Share of an activated merchant's outgoing UPI that moves to Paytm<span class="src">Deck: 15 pp. Sensitivity 10 to 25</span></div><div class="ctl"><input type="number" id="shift" min="1" max="100" step="1"><span class="u">%</span></div></div><input type="range" id="shift_r" min="2" max="60" step="1"></div>
-
-<div class="row rr"><div class="top"><div class="lab"><span class="tag a">ASSUMED</span>Intent weight: "definitely yes"<span class="src">Deck: 0.8. A concept-test rule of thumb</span></div><div class="ctl"><input type="number" id="wd" min="0" max="1" step="0.05"></div></div><input type="range" id="wd_r" min="0" max="1" step="0.05"></div>
-<div class="row rr"><div class="top"><div class="lab"><span class="tag a">ASSUMED</span>Intent weight: "probably yes"<span class="src">Deck: 0.3</span></div><div class="ctl"><input type="number" id="wp" min="0" max="1" step="0.05"></div></div><input type="range" id="wp_r" min="0" max="1" step="0.05"></div>
-
-<div class="row rr"><div class="top"><div class="lab"><span class="tag a">ASSUMED</span>Activation rate override<span class="src">Leave blank to use discounted intent from the test. Type a number to force a rate, e.g. the 20% pilot target</span></div><div class="ctl"><input type="number" id="actov" min="0" max="100" step="1" placeholder="auto"><span class="u">%</span></div></div></div>
-
-<div class="row rr"><div class="top"><div class="lab"><span class="tag a">ASSUMED</span>Active merchant-months realised in Year 1<span class="src">Deck: 25 L, from the ramp 2k → 1 L → 3 L → 8.5 L. Scales with activation</span></div><div class="ctl"><input type="number" id="ramp" min="1" max="100" step="1"><span class="u">% of run-rate</span></div></div><input type="range" id="ramp_r" min="5" max="100" step="1"></div>
+<div class="card cost" style="margin-top:14px">
+<details><summary>Cost assumptions (tap to open)</summary>
+<div class="ctl"><div class="h"><div class="n">Field demo per merchant<small>deck ₹60 · 25 L merchants reached</small></div><div class="v">₹<input type="number" id="c_demo" value="60" min="0" step="5"></div></div></div>
+<div class="ctl"><div class="h"><div class="n">Field incentive per activated merchant<small>deck ₹150, paid to the executive</small></div><div class="v">₹<input type="number" id="c_inc" value="150" min="0" step="10"></div></div></div>
+<div class="ctl"><div class="h"><div class="n">Supplier onboarding, per supplier<small>deck ₹250 × 2.5 L suppliers</small></div><div class="v">₹<input type="number" id="c_sup" value="250" min="0" step="10"></div></div></div>
+<div class="ctl"><div class="h"><div class="n">Build + training, one time<small>deck ₹4 Cr + ₹3 Cr</small></div><div class="v">₹<input type="number" id="c_fix" value="7" min="0" step="0.5"> Cr</div></div></div>
+<div class="ctl"><div class="h"><div class="n">Merchant cashback<small>deck 0%</small></div><div class="v"><input type="number" id="c_cb" value="0" min="0" max="5" step="0.05"> %</div></div></div>
+</details>
 </div>
 
-<div class="card" style="margin-top:14px">
-<h2>Cost assumptions: change these</h2>
-<div class="row"><div class="lab"><span class="tag a">ASSUMED</span>Field demo, per merchant reached<span class="src">Deck: ₹60, on a service visit that already happens</span></div><div class="ctl"><span class="u">₹</span><input type="number" id="c_demo" min="0" step="5"></div></div>
-<div class="row"><div class="lab"><span class="tag a">ASSUMED</span>Merchants reached by demos<span class="src">Deck: 25 L (just under the addressable base)</span></div><div class="ctl"><input type="number" id="c_reach" min="0" step="1"><span class="u">lakh</span></div></div>
-<div class="row"><div class="lab"><span class="tag a">ASSUMED</span>Field incentive per activated merchant<span class="src">Deck: ₹150, paid to the executive, not the merchant</span></div><div class="ctl"><span class="u">₹</span><input type="number" id="c_inc" min="0" step="10"></div></div>
-<div class="row"><div class="lab"><span class="tag a">ASSUMED</span>Suppliers onboarded × cost each<span class="src">Deck: 2.5 L suppliers × ₹250</span></div><div class="ctl"><input type="number" id="c_sup" min="0" step="0.5" style="width:62px"><span class="u">L ×</span><input type="number" id="c_supr" min="0" step="10" style="width:70px"></div></div>
-<div class="row"><div class="lab"><span class="tag a">ASSUMED</span>Product build, one time<span class="src">Deck: ₹4 Cr</span></div><div class="ctl"><span class="u">₹</span><input type="number" id="c_build" min="0" step="0.5"><span class="u">Cr</span></div></div>
-<div class="row"><div class="lab"><span class="tag a">ASSUMED</span>Training, collateral, analytics<span class="src">Deck: ₹3 Cr</span></div><div class="ctl"><span class="u">₹</span><input type="number" id="c_train" min="0" step="0.5"><span class="u">Cr</span></div></div>
-<div class="row"><div class="lab"><span class="tag a">ASSUMED</span>Merchant cashback rate (0 in the design)<span class="src">Add one to see what a reward would cost on the same GMV</span></div><div class="ctl"><input type="number" id="c_cb" min="0" max="5" step="0.05"><span class="u">%</span></div></div>
-<div class="row"><div class="lab"><span class="tag a">ASSUMED</span>Comparison cashback rate<span class="src">Deck: 0.5%, comparison only</span></div><div class="ctl"><input type="number" id="c_cmp" min="0" max="5" step="0.05"><span class="u">%</span></div></div>
+<div class="locked">
+<div class="lab">LOCKED · EVIDENCE</div>
+<div class="i"><span>Paytm device merchants</span><b>1.57 Cr <span style="color:#8A93A6;font-weight:500">Paytm Q1 FY27</span></b></div>
+<div class="i"><span>Pay suppliers from another UPI app</span><b>19 of 28 <span style="color:#8A93A6;font-weight:500">Round 1</span></b></div>
+<div class="i"><span>Median monthly turnover</span><b>₹8 L <span style="color:#8A93A6;font-weight:500">Round 1, 34 merchants</span></b></div>
+<div class="i"><span>Baseline Paytm share</span><b>19% <span style="color:#8A93A6;font-weight:500">4 of 21, Round 1</span></b></div>
+<div class="i"><span>Intent in the test</span><b>13 of 20 <span style="color:#8A93A6;font-weight:500">discounted to 32%</span></b></div>
 </div>
 </div>
 
-<!-- ================= RIGHT: OUTPUTS -->
+<!-- ---------------- RIGHT -->
 <div>
+<div class="kpis">
+<div class="k navy"><div class="big" id="k_share">+3.2 pp</div><div class="t">share of the segment's outgoing UPI GMV</div><div class="d" id="d_share">about 19% to 22%</div></div>
+<div class="k navy"><div class="big" id="k_gmv">₹52,020 Cr</div><div class="t">a year at the month-12 run-rate</div><div class="d" id="d_gmv">Year 1 realised about ₹12,750 Cr</div></div>
+<div class="k tint"><div class="big" id="k_act">8.5 L</div><div class="t">merchants activated in Year 1</div><div class="d" id="d_act">of 27 L addressable</div></div>
+<div class="k tint"><div class="big" id="k_cost">₹41 Cr</div><div class="t">Year 1 cost, ₹0 merchant cashback</div><div class="d" id="d_cost">13% of Paytm's yearly marketing</div></div>
+<div class="k tint"><div class="big" id="k_perm">₹482</div><div class="t">per active merchant</div><div class="d" id="d_perm">break-even value per merchant per year</div></div>
+<div class="k tint"><div class="big" id="k_paise">8 paise</div><div class="t">per ₹100 of extra GMV</div><div class="d" id="d_paise">₹1,269 of payments per ₹1 spent</div></div>
+</div>
+
+<div class="lab" style="margin-top:16px">HOW THE NUMBER IS BUILT</div>
+<div class="chain" id="chain"></div>
+
+<div class="two">
+<div class="card bars">
+<div class="lab">COST VERSUS CASHBACK</div>
+<div class="row"><span>Pay from Collections, Year 1</span><b id="b1v">₹41 Cr</b></div><div class="bar"><i id="b1"></i></div>
+<div class="row"><span>Same GMV with <span id="cmp_l">0.5%</span> cashback, every year</span><b id="b2v">₹260 Cr</b></div><div class="bar"><i class="a" id="b2"></i></div>
+<div class="note" id="ratio"></div>
+</div>
 <div class="card">
-<h2>Headline</h2>
-<div class="big">
-<div class="kpi"><div class="v" id="k_share">+3.2 pp</div><div class="l">share of segment outgoing UPI GMV<span id="d_share" class="delta"></span></div></div>
-<div class="kpi"><div class="v" id="k_gmv">₹52,020 Cr</div><div class="l">a year at run-rate<span id="d_gmv" class="delta"></span></div></div>
-<div class="kpi t"><div class="v" id="k_act">8.5 L</div><div class="l">merchants activated<span id="d_act" class="delta"></span></div></div>
-<div class="kpi t"><div class="v" id="k_cost">₹41 Cr</div><div class="l">Year 1 cost<span id="d_cost" class="delta"></span></div></div>
-<div class="kpi t"><div class="v" id="k_perm">₹482</div><div class="l">per active merchant<span id="d_perm" class="delta"></span></div></div>
-<div class="kpi t"><div class="v" id="k_paise">8 paise</div><div class="l">per ₹100 of run-rate GMV<span id="d_paise" class="delta"></span></div></div>
+<div class="lab">ONE MERCHANT, PER MONTH</div>
+<div class="mini" id="one"></div>
 </div>
-<div class="say" id="say"></div>
 </div>
 
-<div class="card" style="margin-top:14px">
-<h2>The chain, recalculated</h2>
-<div class="out" id="chain"></div>
-<div class="calc" id="calc"></div>
-</div>
-
-<div class="card" style="margin-top:14px">
-<h2>Cost and cashback</h2>
-<div class="out" id="cost"></div>
-<div style="margin-top:8px"><div style="font-size:12px;color:var(--grey)">Pay from Collections, Year 1 <b id="b1v"></b></div><div class="bar"><i id="b1"></i></div>
-<div style="font-size:12px;color:var(--grey);margin-top:6px">Same GMV bought with <span id="cmp_l"></span> cashback, every year <b id="b2v"></b></div><div class="bar"><i class="am" id="b2" style="width:100%"></i></div></div>
-<div class="note" id="costnote"></div>
-</div>
-
-<div class="card" style="margin-top:14px">
-<h2>Break-even and what Paytm needs back</h2>
-<div class="out" id="be"></div>
-<div class="note">UPI carries no merchant fee, so there is no direct revenue. The break-even is what Paytm must earn per active merchant per year from lending, credit or other products. The deck does not estimate profit, and neither does this.</div>
+<div class="say"><div class="l">SAY THIS</div><div id="say"></div></div>
 </div>
 </div>
-<div class="foot">Locked figures are the evidence base: Paytm Q1 FY27 results and Team CG's Round 1 interviews (50) and Round 2 prototype test (20). Everything else is a Team CG assumption and is editable. The model is the same one as the Round 2 Annexure sheet 'Impact model'. Rounding: activated merchants to the nearest 10,000, as in the annexure. Concept, not a Paytm product.</div>
+<div class="foot">Locked figures: Paytm Q1 FY27 Earnings Release and Team CG's Round 1 interviews (50 merchants) and Round 2 prototype test (20 merchants). Everything on the sliders is a Team CG assumption. Same model as the Round 2 Annexure, sheet 'Impact model'. Merchants activated are rounded to the nearest 10,000.</div>
 </div>
 
 <script>
-const CR=1e7, L=1e5;
-const DEV=1.57*CR, LEAK=19/28, TURN=8*L, BASE=4/21, MKT=316*CR, INT={d:5,p:8,n:20}, PER={d:4,p:5,n:9};
-const DECK={band:25,paid:85,upi:50,shift:15,wd:0.8,wp:0.3,actov:'',ramp:24.5,c_demo:60,c_reach:25,c_inc:150,c_sup:2.5,c_supr:250,c_build:4,c_train:3,c_cb:0,c_cmp:0.5};
-const PRESETS={deck:DECK, cons:{...DECK,actov:20,shift:10}, up:{...DECK,actov:52.2,shift:25}, harsh:{...DECK,wd:0.6,wp:0.1}};
-const ids=Object.keys(DECK);
+const CR=1e7,L=1e5,DEV=1.57*CR,LEAK=19/28,TURN=8*L,BASE=4/21,MKT=316*CR,REACH=25*L,SUPN=2.5*L,RAMP=0.245;
 const $=id=>document.getElementById(id);
-function inr(x){const s=Math.round(Math.abs(x)).toString();const last=s.slice(-3),rest=s.slice(0,-3);return (x<0?'-':'')+'₹'+(rest?rest.replace(/\B(?=(\d{2})+(?!\d))/g,',')+',':'')+last}
-function cr(x){ if(Math.abs(x)>=1e12) return '₹'+(x/1e12).toFixed(2).replace(/\.?0+$/,'')+' L Cr'; const v=x/1e7; return v>=100?'₹'+Math.round(v).toLocaleString('en-IN')+' Cr':'₹'+v.toFixed(2).replace(/\.?0+$/,'')+' Cr';}
-function lk(x){return (x/1e5).toFixed(x<1e6?2:1).replace(/\.?0+$/,'')+' L'}
-function pct(x,d=1){return (x*100).toFixed(d)+'%'}
-function get(){const o={};ids.forEach(k=>{o[k]=$(k).value===''?'':+$(k).value});return o}
-function set(o){ids.forEach(k=>{$(k).value=o[k];const r=$(k+'_r');if(r)r.value=o[k]});}
-function model(v){
- const m={};
- m.seg=DEV*v.band/100; m.add=m.seg*LEAK;
- m.disc=(INT.d*v.wd+INT.p*v.wp)/INT.n; m.discP=(PER.d*v.wd+PER.p*v.wp)/PER.n;
- m.rate=v.actov===''?m.disc:v.actov/100; m.rateSrc=v.actov===''?'discounted intent from the test':'override';
- m.act=Math.round(m.add*m.rate/1e4)*1e4;
- m.upiPer=TURN*v.paid/100*v.upi/100; m.perShift=m.upiPer*v.shift/100;
- m.gmv=m.act*m.perShift*12; m.segGmv=m.seg*m.upiPer*12; m.leakGmv=m.add*m.upiPer*12;
- m.share=m.segGmv?m.gmv/m.segGmv:0; m.after=BASE+m.share;
- m.real=m.gmv*v.ramp/100;
- m.cDemo=v.c_reach*L*v.c_demo; m.cInc=m.act*v.c_inc; m.cSup=v.c_sup*L*v.c_supr; m.cBuild=v.c_build*CR; m.cTrain=v.c_train*CR; m.cCb=m.gmv*v.c_cb/100;
- m.cost=m.cDemo+m.cInc+m.cSup+m.cBuild+m.cTrain+m.cCb;
- m.perM=m.act?m.cost/m.act:0; m.paise=m.gmv?m.cost/m.gmv*1e4:0; m.paiseReal=m.real?m.cost/m.real*1e4:0;
- m.cmp=m.gmv*v.c_cmp/100; m.ratio=m.cost?m.cmp/m.cost:0; m.mkt=m.cost/MKT;
- m.be=m.perM; m.perRupee=m.cost?m.gmv/m.cost:0;
- return m;
-}
-const D=model(DECK);
-function delta(el,now,base,fmt,inv){const e=$(el);if(Math.abs(now-base)<1e-9){e.textContent='';e.className='delta';return}const up=now>base;e.textContent=(up?'▲ ':'▼ ')+fmt(Math.abs(now-base))+(up?' above deck':' below deck');e.className='delta '+((up!==!!inv)?'up':'dn');}
-function render(){
- const v=get(); const m=model(v);
- $('k_share').textContent=(m.share>=0?'+':'')+(m.share*100).toFixed(1)+' pp'; delta('d_share',m.share*100,D.share*100,x=>x.toFixed(1)+' pp');
- $('k_gmv').textContent=cr(m.gmv); delta('d_gmv',m.gmv,D.gmv,cr);
- $('k_act').textContent=lk(m.act); delta('d_act',m.act,D.act,lk);
- $('k_cost').textContent=cr(m.cost); delta('d_cost',m.cost,D.cost,cr,true);
- $('k_perm').textContent=inr(m.perM); delta('d_perm',m.perM,D.perM,inr,true);
- $('k_paise').textContent=(m.paise<3?m.paise.toFixed(1):Math.round(m.paise))+' paise'; delta('d_paise',m.paise,D.paise,x=>x.toFixed(1)+' paise',true);
- const ch=[['h','Merchants'],['Paytm device merchants (locked)','1.57 Cr'],['× share in the ₹3 to 20 L band',v.band+'%'],['= segment merchants',lk(m.seg)],['× pay suppliers from another UPI app (locked)','19 of 28 = '+pct(LEAK)],['= addressable merchants',lk(m.add)],['Discounted intent: (5 × '+v.wd+' + 8 × '+v.wp+') ÷ 20',pct(m.disc)],['Target persona: (4 × '+v.wd+' + 5 × '+v.wp+') ÷ 9',pct(m.discP)],['Activation rate used ('+m.rateSrc+')',pct(m.rate)],['= merchants activated (rounded to 10,000)',lk(m.act)],
-  ['h','One merchant, per month'],['Turnover (locked)','₹8,00,000'],['× paid out '+v.paid+'%',inr(TURN*v.paid/100)],['× over UPI '+v.upi+'%',inr(m.upiPer)],['× moved to Paytm '+v.shift+'%',inr(m.perShift)],
-  ['h','The result'],['Incremental UPI GMV a year (run-rate) = activated × extra × 12',cr(m.gmv)],['Segment outgoing UPI a year = segment × ₹'+Math.round(m.upiPer).toLocaleString('en-IN')+' × 12',cr(m.segGmv)],['Leaking through rival apps a year',cr(m.leakGmv)],['Share gain = incremental ÷ segment',(m.share*100).toFixed(2)+' pp'],['Paytm share: about '+pct(BASE,0)+' (locked) → about',pct(m.after,0)],['Realised in Year 1 at '+v.ramp+'% of run-rate',cr(m.real)],['Average per merchant per month, as payments',inr(m.perShift)+' (e.g. 4 × '+inr(m.perShift/4)+' or 25 × '+inr(m.perShift/25)+')']];
- $('chain').innerHTML=ch.map(r=>r[0]==='h'?'<div class="h">'+r[1]+'</div>':'<div class="k">'+r[0]+'</div><div class="v">'+r[1]+'</div>').join('');
- $('calc').textContent=`${lk(m.act)} merchants × ${inr(m.perShift)} × 12 = ${cr(m.gmv)}\n${cr(m.gmv)} ÷ ${cr(m.segGmv)} = ${(m.share*100).toFixed(2)} pp`;
- const co=[['Field demo: '+v.c_reach+' L × ₹'+v.c_demo,cr(m.cDemo)],['Field incentive: '+lk(m.act)+' × ₹'+v.c_inc,cr(m.cInc)],['Supplier onboarding: '+v.c_sup+' L × ₹'+v.c_supr,cr(m.cSup)],['Product build',cr(m.cBuild)],['Training, collateral, analytics',cr(m.cTrain)],['Merchant cashback at '+v.c_cb+'% of GMV',cr(m.cCb)],['h','Totals'],['Year 1 cost',cr(m.cost)],['Per active merchant = cost ÷ activated',inr(m.perM)],['Per ₹100 of run-rate GMV',m.paise.toFixed(1)+' paise'],['Per ₹100 of Year 1 realised GMV',m.paiseReal.toFixed(1)+' paise'],['Share of Paytm yearly marketing (₹316 Cr, locked)',pct(m.mkt,0)],['GMV brought per ₹1 spent','₹'+Math.round(m.perRupee).toLocaleString('en-IN')],['Same GMV with '+v.c_cmp+'% cashback, every year',cr(m.cmp)],['Cashback ÷ our cost',m.ratio.toFixed(1)+'×']];
- $('cost').innerHTML=co.map(r=>r[0]==='h'?'<div class="h">'+r[1]+'</div>':'<div class="k">'+r[0]+'</div><div class="v">'+r[1]+'</div>').join('');
- const mx=Math.max(m.cost,m.cmp,1); $('b1').style.width=(m.cost/mx*100)+'%'; $('b2').style.width=(m.cmp/mx*100)+'%'; $('b1v').textContent=cr(m.cost); $('b2v').textContent=cr(m.cmp); $('cmp_l').textContent=v.c_cmp+'%';
- $('costnote').textContent=m.ratio>=1?`At these inputs, cashback would cost ${m.ratio.toFixed(1)} times as much as Pay from Collections, and it recurs every year.`:`At these inputs, Pay from Collections costs more than a ${v.c_cmp}% cashback would.`;
- const be=[['Break-even value per active merchant per year',inr(m.be)],['That is, per merchant per month',inr(m.be/12)],['If each merchant is worth ₹1,000 a year: income at run-rate',cr(m.act*1000)+' vs cost '+cr(m.cost)+(m.act*1000>=m.cost?' (covers it)':' (short)')],['If each merchant is worth ₹2,000 a year',cr(m.act*2000)+' vs cost '+cr(m.cost)]];
- $('be').innerHTML=be.map(r=>'<div class="k">'+r[0]+'</div><div class="v">'+r[1]+'</div>').join('');
- const changed=ids.filter(k=>String(v[k])!==String(DECK[k]));
- const names={band:'band share '+v.band+'%',paid:'paid out '+v.paid+'%',upi:'over UPI '+v.upi+'%',shift:'shift '+v.shift+'%',wd:'definitely weight '+v.wd,wp:'probably weight '+v.wp,actov:'activation forced to '+v.actov+'%',ramp:'Year 1 ramp '+v.ramp+'%',c_demo:'demo ₹'+v.c_demo,c_reach:'reach '+v.c_reach+' L',c_inc:'incentive ₹'+v.c_inc,c_sup:'suppliers '+v.c_sup+' L',c_supr:'supplier cost ₹'+v.c_supr,c_build:'build ₹'+v.c_build+' Cr',c_train:'training ₹'+v.c_train+' Cr',c_cb:'merchant cashback '+v.c_cb+'%',c_cmp:'comparison cashback '+v.c_cmp+'%'};
- $('say').innerHTML=changed.length?`<b>Say this:</b> "With ${changed.map(k=>names[k]).join(', ')}, the gain is <b>${(m.share>=0?'plus ':'')+(m.share*100).toFixed(1)} percentage points</b>, about <b>${cr(m.gmv)}</b> a year at run-rate, from ${lk(m.act)} merchants, at <b>${inr(m.perM)}</b> per merchant and <b>${m.paise.toFixed(0)} paise per ₹100</b>. A ${v.c_cmp}% cashback on the same GMV would cost ${cr(m.cmp)} a year."`:`<b>Say this:</b> "On our base case the gain is <b>plus 3.2 percentage points</b>, about <b>₹52,020 crore</b> a year at run-rate from 8.5 lakh merchants, at <b>₹482</b> per merchant and <b>8 paise per ₹100</b>. Change any assumption above and this line updates."`;
-}
-ids.forEach(k=>{const n=$(k),r=$(k+'_r');n.addEventListener('input',()=>{if(r)r.value=n.value;render()});if(r)r.addEventListener('input',()=>{n.value=r.value;render()});});
-$('reset').onclick=()=>{set(DECK);render()};
-document.querySelectorAll('.pre button').forEach(b=>b.onclick=()=>{set(PRESETS[b.dataset.p]);render()});
-set(DECK);render();
+const S=['band','act','paid','upi','shift','cmp'], C=['c_demo','c_inc','c_sup','c_fix','c_cb'];
+const DECK={band:25,act:32,paid:85,upi:50,shift:15,cmp:0.5,c_demo:60,c_inc:150,c_sup:250,c_fix:7,c_cb:0};
+const PRE={deck:DECK,cons:{...DECK,act:20,shift:10},up:{...DECK,act:52.2,shift:25}};
+const inr=x=>{const s=Math.round(x).toString(),l=s.slice(-3),r=s.slice(0,-3);return '₹'+(r?r.replace(/\B(?=(\d{2})+(?!\d))/g,',')+',':'')+l};
+const cr=x=>{if(x>=1e12)return '₹'+(x/1e12).toFixed(2).replace(/\.?0+$/,'')+' L Cr';const v=x/1e7;return v>=100?'₹'+Math.round(v).toLocaleString('en-IN')+' Cr':'₹'+v.toFixed(1).replace(/\.0$/,'')+' Cr'};
+const lk=x=>(x/1e5).toFixed(1).replace(/\.0$/,'')+' L';
+const pc=(x,d=0)=>(x*100).toFixed(d)+'%';
+function val(){const o={};[...S,...C].forEach(k=>o[k]=+$(k).value);return o}
+function setv(o){[...S,...C].forEach(k=>{$(k).value=o[k]})}
+function calc(v){const m={};m.seg=DEV*v.band/100;m.add=m.seg*LEAK;m.act=Math.round(m.add*v.act/100/1e4)*1e4;
+ m.paid=TURN*v.paid/100;m.upi=m.paid*v.upi/100;m.per=m.upi*v.shift/100;
+ m.gmv=m.act*m.per*12;m.seggmv=m.seg*m.upi*12;m.share=m.seggmv?m.gmv/m.seggmv:0;m.real=m.gmv*RAMP;
+ m.cost=REACH*v.c_demo+m.act*v.c_inc+SUPN*v.c_sup+v.c_fix*CR+m.gmv*v.c_cb/100;
+ m.perm=m.act?m.cost/m.act:0;m.paise=m.gmv?m.cost/m.gmv*1e4:0;m.cmp=m.gmv*v.cmp/100;m.ratio=m.cost?m.cmp/m.cost:0;m.perr=m.cost?m.gmv/m.cost:0;return m}
+function pp(x){return (x>=0?'+':'')+(x*100).toFixed(1)+' pp'}
+function render(){const v=val(),m=calc(v);
+ S.forEach(k=>{const e=$('v_'+k);e.textContent=(k==='cmp'?v[k].toFixed(2).replace(/0$/,''):(k==='act'?v[k].toFixed(0):v[k]))+'%';e.classList.toggle('base',v[k]===DECK[k])});
+ $('k_share').textContent=pp(m.share);$('d_share').textContent='about '+pc(BASE)+' to '+pc(BASE+m.share);
+ $('k_gmv').textContent=cr(m.gmv);$('d_gmv').textContent='Year 1 realised about '+cr(m.real);
+ $('k_act').textContent=lk(m.act);$('d_act').textContent='of '+lk(m.add)+' addressable';
+ $('k_cost').textContent=cr(m.cost);$('d_cost').textContent=pc(m.cost/MKT)+" of Paytm's yearly marketing";
+ $('k_perm').textContent=inr(m.perm);$('d_perm').textContent='break-even value per merchant per year';
+ $('k_paise').textContent=(m.paise<3?m.paise.toFixed(1):Math.round(m.paise))+' paise';$('d_paise').textContent=inr(m.perr)+' of payments per ₹1 spent';
+ const steps=[[lk(m.act),'merchants activated'],['× '+inr(m.per),'extra on Paytm a month, each'],['× 12','months'],['= '+cr(m.gmv),'a year at run-rate'],['÷ '+cr(m.seggmv),'segment outgoing UPI a year'],['= '+pp(m.share),'share of segment UPI GMV']];
+ $('chain').innerHTML=steps.map((s,i)=>'<div class="step'+(i>=3?' res':'')+'"><div class="x">'+s[0]+'</div><div class="y">'+s[1]+'</div></div>').join('');
+ const mx=Math.max(m.cost,m.cmp,1);$('b1').style.width=(m.cost/mx*100)+'%';$('b2').style.width=(m.cmp/mx*100)+'%';$('b1v').textContent=cr(m.cost);$('b2v').textContent=cr(m.cmp);$('cmp_l').textContent=v.cmp+'%';
+ $('ratio').textContent=m.ratio>=1?'Cashback would cost '+m.ratio.toFixed(1)+' times as much, every year, and stops working when it stops.':'At these inputs cashback would be cheaper.';
+ $('one').innerHTML=[['Turnover (median, Round 1)','₹8,00,000'],['× '+v.paid+'% paid out',inr(m.paid)],['× '+v.upi+'% over UPI',inr(m.upi)],['× '+v.shift+'% moved to Paytm',inr(m.per)],['That is, per month',inr(m.per)+' (e.g. 4 × '+inr(m.per/4)+')']].map(r=>'<div>'+r[0]+'</div><div class="r">'+r[1]+'</div>').join('');
+ const ch=S.filter(k=>v[k]!==DECK[k]).map(k=>({band:'one in '+(100/v.band).toFixed(1).replace(/\.0$/,'')+' merchants in the band',act:'activation at '+v.act+'%',paid:v.paid+'% paid out',upi:v.upi+'% over UPI',shift:'a '+v.shift+'% shift',cmp:''})[k]).filter(Boolean);
+ $('say').innerHTML=(ch.length?'With '+ch.join(', ')+', ':'On our base case, ')+'the gain is <b>'+pp(m.share).replace('+','plus ')+'</b>, about <b>'+cr(m.gmv)+'</b> a year at run-rate from '+lk(m.act)+' merchants, at <b>'+inr(m.perm)+'</b> per merchant and <b>'+(m.paise<3?m.paise.toFixed(1):Math.round(m.paise))+' paise per ₹100</b>. A '+v.cmp+'% cashback on the same GMV would cost '+cr(m.cmp)+' a year, every year.';
+ document.querySelectorAll('[data-p]').forEach(b=>b.classList.toggle('on',JSON.stringify(PRE[b.dataset.p])===JSON.stringify(v)));}
+[...S,...C].forEach(k=>$(k).addEventListener('input',render));
+document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{setv(PRE[b.dataset.p]);render()});
+$('reset').onclick=()=>{setv(DECK);render()};
+render();
 </script>
 </body></html>
